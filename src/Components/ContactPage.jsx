@@ -254,11 +254,11 @@ const ContactPage = () => {
             borderColor: "#4C1D95"
           }}
         >
-          <h3 className="text-2xl md:text-3xl font-bold mb-3 text-gray-900">
+          <h3 className="text-2xl md:text-3xl font-bold mb-3 text-white">
             Prefer instant conversation?
           </h3>
 
-          <p className="text-gray-600 mb-8">
+          <p className="text-white mb-8">
             Chat directly with our team on WhatsApp
           </p>
 

@@ -19,6 +19,18 @@ const Services = React.memo(() => {
   const prefersReducedMotion = useReducedMotion();
   const [currentSlides, setCurrentSlides] = useState([0, 0, 0]);
   const [likedCards, setLikedCards] = useState([false, false, false]);
+  const [isMobile, setIsMobile] = useState(false);
+  const [mobileSlideIndex, setMobileSlideIndex] = useState(0);
+
+  // Detect mobile view
+  useEffect(() => {
+    const checkMobile = () => {
+      setIsMobile(window.innerWidth < 768);
+    };
+    checkMobile();
+    window.addEventListener('resize', checkMobile);
+    return () => window.removeEventListener('resize', checkMobile);
+  }, []);
 
   const handleLike = useCallback((cardIndex) => {
     setLikedCards(prev => {
@@ -104,21 +116,31 @@ const Services = React.memo(() => {
     },
   ];
 
-  // Auto-rotate slides every 3 seconds (increased from 2)
-  useEffect(() => {
-    // Disable auto-rotation on mobile to save performance
-    if (window.innerWidth < 768) return;
-    
-    const interval = setInterval(() => {
-      setCurrentSlides((prev) =>
-        prev.map((slideIndex, cardIndex) => 
-          (slideIndex + 1) % services[cardIndex].slides.length
-        )
-      );
-    }, 3000);
+  // Flatten all services for mobile view
+  const allServices = useMemo(() => {
+    return services.flatMap(service => service.slides);
+  }, []);
 
-    return () => clearInterval(interval);
-  }, [services.length]);
+  // Auto-rotate slides every 3 seconds
+  useEffect(() => {
+    if (isMobile) {
+      // Mobile: rotate through all services in single card
+      const interval = setInterval(() => {
+        setMobileSlideIndex((prev) => (prev + 1) % allServices.length);
+      }, 3000);
+      return () => clearInterval(interval);
+    } else {
+      // Desktop: rotate slides in each card
+      const interval = setInterval(() => {
+        setCurrentSlides((prev) =>
+          prev.map((slideIndex, cardIndex) => 
+            (slideIndex + 1) % services[cardIndex].slides.length
+          )
+        );
+      }, 3000);
+      return () => clearInterval(interval);
+    }
+  }, [isMobile, allServices.length, services]);
 
   return (
     <section
@@ -221,134 +243,260 @@ const Services = React.memo(() => {
 
         {/* Instagram-Style Service Cards Grid */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 lg:gap-8">
-          {services.map((service, cardIndex) => {
-            const currentSlide = service.slides[currentSlides[cardIndex]];
-            
-            return (
-              <motion.article
-                key={cardIndex}
-                initial={{ opacity: 0, y: 20 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true }}
-                transition={{ duration: 0.5, delay: cardIndex * 0.1 }}
-                className="max-w-[468px] w-full mx-auto bg-white rounded-xl shadow-[0_2px_12px_rgba(0,0,0,0.08)] overflow-hidden"
-              >
-                {/* Header Section */}
-                <header className="px-3 py-3 flex items-center justify-between border-b border-gray-100">
-                  <div className="flex items-center gap-3 flex-1 min-w-0">
-                    {/* Avatar */}
-                    <div className="relative flex-shrink-0">
-                      <div className="w-8 h-8 rounded-full overflow-hidden ring-2 ring-gray-100">
-                        <img
-                          src={service.avatarUrl}
-                          alt={`${service.username}'s avatar`}
-                          className="w-full h-full object-cover"
-                          loading="lazy"
-                        />
-                      </div>
+          {isMobile ? (
+            /* Mobile: Single card cycling through all services */
+            <motion.article
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              transition={{ duration: 0.5 }}
+              className="max-w-[468px] w-full mx-auto bg-white rounded-xl shadow-[0_2px_12px_rgba(0,0,0,0.08)] overflow-hidden"
+            >
+              {/* Header Section */}
+              <header className="px-3 py-3 flex items-center justify-between border-b border-gray-100">
+                <div className="flex items-center gap-3 flex-1 min-w-0">
+                  {/* Avatar */}
+                  <div className="relative flex-shrink-0">
+                    <div className="w-8 h-8 rounded-full overflow-hidden ring-2 ring-gray-100">
+                      <img
+                        src="/logo.png"
+                        alt="prsparkz avatar"
+                        className="w-full h-full object-cover"
+                        loading="lazy"
+                      />
                     </div>
-                    
-                    {/* Username */}
-                    <span className="font-semibold text-sm text-gray-900 truncate">
-                      {service.username}
-                    </span>
                   </div>
                   
-                  {/* Three-dot menu */}
-                  <button 
-                    className="p-2 -mr-2 text-gray-600 hover:text-gray-900 transition-colors duration-150"
-                    aria-label="More options"
-                  >
-                    <MoreHorizontal className="w-5 h-5" />
-                  </button>
-                </header>
-
-                {/* Image Section with Slide Indicator */}
-                <div className="relative aspect-square bg-gray-100 overflow-hidden">
-                  <AnimatePresence mode="wait">
-                    <motion.img
-                      key={currentSlides[cardIndex]}
-                      src={currentSlide.imageUrl}
-                      alt={currentSlide.title}
-                      className="w-full h-full object-cover"
-                      loading="lazy"
-                      initial={{ x: '100%', opacity: 0 }}
-                      animate={{ x: 0, opacity: 1 }}
-                      exit={{ x: '-100%', opacity: 0 }}
-                      transition={{ duration: 0.5, ease: "easeInOut" }}
-                    />
-                  </AnimatePresence>
-                  
-                  {/* Slide Indicator */}
-                  <div className="absolute top-3 right-3 bg-black/50 backdrop-blur-sm text-white text-xs px-2 py-1 rounded-full">
-                    {currentSlides[cardIndex] + 1}/{service.slides.length}
-                  </div>
+                  {/* Username */}
+                  <span className="font-semibold text-sm text-gray-900 truncate">
+                    prsparkz
+                  </span>
                 </div>
+                
+                {/* Three-dot menu */}
+                <button 
+                  className="p-2 -mr-2 text-gray-600 hover:text-gray-900 transition-colors duration-150"
+                  aria-label="More options"
+                >
+                  <MoreHorizontal className="w-5 h-5" />
+                </button>
+              </header>
 
-                {/* Footer Actions */}
-                <div className="px-3 py-3 border-t border-gray-100">
-                  {/* Action Icons Row */}
-                  <div className="flex items-center justify-between mb-3">
-                    <div className="flex items-center gap-1">
-                      {/* Like button */}
-                      <button
-                        onClick={() => handleLike(cardIndex)}
-                        className="p-2 -ml-2 hover:opacity-60 active:scale-90 transition-all duration-150"
-                        aria-label="Like"
-                      >
-                        <Heart className={`w-6 h-6 transition-colors duration-200 ${
-                          likedCards[cardIndex] ? 'fill-red-500 stroke-red-500' : 'stroke-gray-700'
-                        }`} />
-                      </button>
-                      
-                      {/* Comment button */}
-                      <button 
-                        onClick={handleComment}
-                        className="p-2 hover:opacity-60 active:scale-90 transition-all duration-150"
-                      >
-                        <MessageCircle className="w-6 h-6 stroke-gray-700" />
-                      </button>
-                      
-                      {/* Share button */}
-                      <button 
-                        onClick={handleShare}
-                        className="p-2 hover:opacity-60 active:scale-90 transition-all duration-150"
-                      >
-                        <Send className="w-6 h-6 stroke-gray-700" />
-                      </button>
-                    </div>
-                    
-                    {/* Save button */}
+              {/* Image Section with Slide Indicator */}
+              <div className="relative aspect-square bg-gray-100 overflow-hidden">
+                <AnimatePresence mode="wait">
+                  <motion.img
+                    key={mobileSlideIndex}
+                    src={allServices[mobileSlideIndex].imageUrl}
+                    alt={allServices[mobileSlideIndex].title}
+                    className="w-full h-full object-cover"
+                    loading="lazy"
+                    initial={{ x: '100%', opacity: 0 }}
+                    animate={{ x: 0, opacity: 1 }}
+                    exit={{ x: '-100%', opacity: 0 }}
+                    transition={{ duration: 0.5, ease: "easeInOut" }}
+                  />
+                </AnimatePresence>
+                
+                {/* Slide Indicator */}
+                <div className="absolute top-3 right-3 bg-black/50 backdrop-blur-sm text-white text-xs px-2 py-1 rounded-full">
+                  {mobileSlideIndex + 1}/{allServices.length}
+                </div>
+              </div>
+
+              {/* Footer Actions */}
+              <div className="px-3 py-3 border-t border-gray-100">
+                {/* Action Icons Row */}
+                <div className="flex items-center justify-between mb-3">
+                  <div className="flex items-center gap-1">
+                    {/* Like button */}
                     <button
-                      className="p-2 -mr-2 hover:opacity-60 active:scale-90 transition-all duration-150"
-                      aria-label="Save"
+                      onClick={() => handleLike(0)}
+                      className="p-2 -ml-2 hover:opacity-60 active:scale-90 transition-all duration-150"
+                      aria-label="Like"
                     >
-                      <Bookmark className="w-6 h-6 stroke-gray-700" />
+                      <Heart className={`w-6 h-6 transition-colors duration-200 ${
+                        likedCards[0] ? 'fill-red-500 stroke-red-500' : 'stroke-gray-700'
+                      }`} />
+                    </button>
+                    
+                    {/* Comment button */}
+                    <button 
+                      onClick={handleComment}
+                      className="p-2 hover:opacity-60 active:scale-90 transition-all duration-150"
+                    >
+                      <MessageCircle className="w-6 h-6 stroke-gray-700" />
+                    </button>
+                    
+                    {/* Share button */}
+                    <button 
+                      onClick={handleShare}
+                      className="p-2 hover:opacity-60 active:scale-90 transition-all duration-150"
+                    >
+                      <Send className="w-6 h-6 stroke-gray-700" />
                     </button>
                   </div>
-
-                  {/* Caption with smooth transition */}
-                  <AnimatePresence mode="wait">
-                    <motion.div
-                      key={currentSlides[cardIndex]}
-                      initial={{ opacity: 0, y: 10 }}
-                      animate={{ opacity: 1, y: 0 }}
-                      exit={{ opacity: 0, y: -10 }}
-                      transition={{ duration: 0.3 }}
-                    >
-                      <p className="text-sm leading-5">
-                        <span className="font-semibold text-gray-900">{service.username}</span>
-                        <span className="text-gray-800 ml-2 font-bold">{currentSlide.title}</span>
-                      </p>
-                      <p className="text-sm text-gray-600 mt-1">
-                        {currentSlide.description}
-                      </p>
-                    </motion.div>
-                  </AnimatePresence>
+                  
+                  {/* Save button */}
+                  <button
+                    className="p-2 -mr-2 hover:opacity-60 active:scale-90 transition-all duration-150"
+                    aria-label="Save"
+                  >
+                    <Bookmark className="w-6 h-6 stroke-gray-700" />
+                  </button>
                 </div>
-              </motion.article>
-            );
-          })}
+
+                {/* Caption with smooth transition */}
+                <AnimatePresence mode="wait">
+                  <motion.div
+                    key={mobileSlideIndex}
+                    initial={{ opacity: 0, y: 10 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    exit={{ opacity: 0, y: -10 }}
+                    transition={{ duration: 0.3 }}
+                  >
+                    <p className="text-sm leading-5">
+                      <span className="font-semibold text-gray-900">prsparkz</span>
+                      <span className="text-gray-800 ml-2 font-bold">{allServices[mobileSlideIndex].title}</span>
+                    </p>
+                    <p className="text-sm text-gray-600 mt-1">
+                      {allServices[mobileSlideIndex].description}
+                    </p>
+                  </motion.div>
+                </AnimatePresence>
+              </div>
+            </motion.article>
+          ) : (
+            /* Desktop: Three separate cards */
+            services.map((service, cardIndex) => {
+              const currentSlide = service.slides[currentSlides[cardIndex]];
+              
+              return (
+                <motion.article
+                  key={cardIndex}
+                  initial={{ opacity: 0, y: 20 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  viewport={{ once: true }}
+                  transition={{ duration: 0.5, delay: cardIndex * 0.1 }}
+                  className="max-w-[468px] w-full mx-auto bg-white rounded-xl shadow-[0_2px_12px_rgba(0,0,0,0.08)] overflow-hidden"
+                >
+                  {/* Header Section */}
+                  <header className="px-3 py-3 flex items-center justify-between border-b border-gray-100">
+                    <div className="flex items-center gap-3 flex-1 min-w-0">
+                      {/* Avatar */}
+                      <div className="relative flex-shrink-0">
+                        <div className="w-8 h-8 rounded-full overflow-hidden ring-2 ring-gray-100">
+                          <img
+                            src={service.avatarUrl}
+                            alt={`${service.username}'s avatar`}
+                            className="w-full h-full object-cover"
+                            loading="lazy"
+                          />
+                        </div>
+                      </div>
+                      
+                      {/* Username */}
+                      <span className="font-semibold text-sm text-gray-900 truncate">
+                        {service.username}
+                      </span>
+                    </div>
+                    
+                    {/* Three-dot menu */}
+                    <button 
+                      className="p-2 -mr-2 text-gray-600 hover:text-gray-900 transition-colors duration-150"
+                      aria-label="More options"
+                    >
+                      <MoreHorizontal className="w-5 h-5" />
+                    </button>
+                  </header>
+
+                  {/* Image Section with Slide Indicator */}
+                  <div className="relative aspect-square bg-gray-100 overflow-hidden">
+                    <AnimatePresence mode="wait">
+                      <motion.img
+                        key={currentSlides[cardIndex]}
+                        src={currentSlide.imageUrl}
+                        alt={currentSlide.title}
+                        className="w-full h-full object-cover"
+                        loading="lazy"
+                        initial={{ x: '100%', opacity: 0 }}
+                        animate={{ x: 0, opacity: 1 }}
+                        exit={{ x: '-100%', opacity: 0 }}
+                        transition={{ duration: 0.5, ease: "easeInOut" }}
+                      />
+                    </AnimatePresence>
+                    
+                    {/* Slide Indicator */}
+                    <div className="absolute top-3 right-3 bg-black/50 backdrop-blur-sm text-white text-xs px-2 py-1 rounded-full">
+                      {currentSlides[cardIndex] + 1}/{service.slides.length}
+                    </div>
+                  </div>
+
+                  {/* Footer Actions */}
+                  <div className="px-3 py-3 border-t border-gray-100">
+                    {/* Action Icons Row */}
+                    <div className="flex items-center justify-between mb-3">
+                      <div className="flex items-center gap-1">
+                        {/* Like button */}
+                        <button
+                          onClick={() => handleLike(cardIndex)}
+                          className="p-2 -ml-2 hover:opacity-60 active:scale-90 transition-all duration-150"
+                          aria-label="Like"
+                        >
+                          <Heart className={`w-6 h-6 transition-colors duration-200 ${
+                            likedCards[cardIndex] ? 'fill-red-500 stroke-red-500' : 'stroke-gray-700'
+                          }`} />
+                        </button>
+                        
+                        {/* Comment button */}
+                        <button 
+                          onClick={handleComment}
+                          className="p-2 hover:opacity-60 active:scale-90 transition-all duration-150"
+                        >
+                          <MessageCircle className="w-6 h-6 stroke-gray-700" />
+                        </button>
+                        
+                        {/* Share button */}
+                        <button 
+                          onClick={handleShare}
+                          className="p-2 hover:opacity-60 active:scale-90 transition-all duration-150"
+                        >
+                          <Send className="w-6 h-6 stroke-gray-700" />
+                        </button>
+                      </div>
+                      
+                      {/* Save button */}
+                      <button
+                        className="p-2 -mr-2 hover:opacity-60 active:scale-90 transition-all duration-150"
+                        aria-label="Save"
+                      >
+                        <Bookmark className="w-6 h-6 stroke-gray-700" />
+                      </button>
+                    </div>
+
+                    {/* Caption with smooth transition */}
+                    <AnimatePresence mode="wait">
+                      <motion.div
+                        key={currentSlides[cardIndex]}
+                        initial={{ opacity: 0, y: 10 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        exit={{ opacity: 0, y: -10 }}
+                        transition={{ duration: 0.3 }}
+                      >
+                        <p className="text-sm leading-5">
+                          <span className="font-semibold text-gray-900">{service.username}</span>
+                          <span className="text-gray-800 ml-2 font-bold">{currentSlide.title}</span>
+                        </p>
+                        <p className="text-sm text-gray-600 mt-1">
+                          {currentSlide.description}
+                        </p>
+                      </motion.div>
+                    </AnimatePresence>
+                  </div>
+                </motion.article>
+              );
+            })
+          )}
         </div>
       </div>
     </section>
