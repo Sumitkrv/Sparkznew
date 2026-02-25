@@ -11,8 +11,17 @@ export default defineConfig({
     sourcemap: false,
     rollupOptions: {
       output: {
-        manualChunks: undefined
+        manualChunks: undefined,
+        assetFileNames: (assetInfo) => {
+          // Keep video files in root with original names for better caching
+          if (assetInfo.name && assetInfo.name.endsWith('.mp4')) {
+            return '[name][extname]';
+          }
+          return 'assets/[name]-[hash][extname]';
+        }
       }
     }
-  }
+  },
+  // Optimize video asset handling
+  assetsInclude: ['**/*.mp4'],
 })

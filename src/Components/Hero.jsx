@@ -1,8 +1,22 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 
 export default function Hero() {
   const navigate = useNavigate();
+  
+  // Preload video for faster loading
+  useEffect(() => {
+    const link = document.createElement('link');
+    link.rel = 'preload';
+    link.as = 'video';
+    link.href = '/sumit3.mp4';
+    link.type = 'video/mp4';
+    document.head.appendChild(link);
+    
+    return () => {
+      document.head.removeChild(link);
+    };
+  }, []);
   
   const handleCTAClick = () => {
     navigate('/contact');
@@ -21,6 +35,7 @@ export default function Hero() {
             muted
             playsInline
             preload="auto"
+            loading="eager"
             className="absolute top-0 left-0 w-full h-full object-contain"
             style={{ willChange: 'auto' }}
           >
@@ -71,6 +86,7 @@ export default function Hero() {
             muted
             playsInline
             preload="auto"
+            loading="eager"
             className="absolute top-0 left-0 w-full h-full object-contain"
             style={{ willChange: 'auto' }}
           >
@@ -119,6 +135,7 @@ export default function Hero() {
           muted
           playsInline
           preload="auto"
+          loading="eager"
           className="absolute top-0 left-0 w-full h-full object-cover"
           style={{ willChange: 'auto' }}
         >
