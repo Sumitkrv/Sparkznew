@@ -22,7 +22,7 @@ const theme = {
   midnightPurple: "#4A1F8F"
 };
 
-const AboutUs = () => {
+const AboutUs = React.memo(() => {
   const [isVisible, setIsVisible] = useState(true);
   const sectionRef = useRef(null);
 
@@ -189,6 +189,8 @@ const AboutUs = () => {
       </div>
     </section>
   );
-};
+});
+
+AboutUs.displayName = 'AboutUs';
 
 export default AboutUs;

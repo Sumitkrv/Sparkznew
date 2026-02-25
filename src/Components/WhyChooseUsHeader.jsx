@@ -1,7 +1,7 @@
 import React from "react";
 import { motion } from "framer-motion";
 
-const WhyChooseUsHeader = () => (
+const WhyChooseUsHeader = React.memo(() => (
   <section 
     className="relative bg-white overflow-hidden"
     style={{
@@ -56,6 +56,8 @@ const WhyChooseUsHeader = () => (
       </motion.div>
     </div>
   </section>
-);
+));
+
+WhyChooseUsHeader.displayName = 'WhyChooseUsHeader';
 
 export default WhyChooseUsHeader;

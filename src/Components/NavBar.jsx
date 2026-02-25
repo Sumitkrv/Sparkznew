@@ -28,37 +28,46 @@ const ModernNavbar = () => {
     return () => window.removeEventListener('resize', handleResize);
   }, []);
 
-  // Scroll detection
+  // Scroll detection with throttling for better performance
   useEffect(() => {
+    let ticking = false;
+    
     const handleScroll = () => {
-      const scrolled = window.scrollY > 20;
-      setIsScrolled(scrolled);
-      
-      const heroHeight = window.innerHeight * 0.8;
-      const footer = document.querySelector('footer');
-      const windowHeight = window.innerHeight;
-      const documentHeight = document.documentElement.scrollHeight;
-      const scrollTop = window.scrollY;
-      
-      // Show floating nav after hero, but hide when near footer
-      let shouldShow = scrollTop > heroHeight;
-      
-      if (footer) {
-        const footerTop = footer.getBoundingClientRect().top + scrollTop;
-        const distanceToFooter = footerTop - scrollTop - windowHeight;
+      if (!ticking) {
+        window.requestAnimationFrame(() => {
+          const scrolled = window.scrollY > 20;
+          setIsScrolled(scrolled);
+          
+          const heroHeight = window.innerHeight * 0.8;
+          const footer = document.querySelector('footer');
+          const windowHeight = window.innerHeight;
+          const documentHeight = document.documentElement.scrollHeight;
+          const scrollTop = window.scrollY;
+          
+          // Show floating nav after hero, but hide when near footer
+          let shouldShow = scrollTop > heroHeight;
+          
+          if (footer) {
+            const footerTop = footer.getBoundingClientRect().top + scrollTop;
+            const distanceToFooter = footerTop - scrollTop - windowHeight;
+            
+            // Hide when footer is within 200px of viewport
+            if (distanceToFooter < 200) {
+              shouldShow = false;
+            }
+          } else {
+            // Fallback: hide when near bottom of page
+            if (scrollTop + windowHeight > documentHeight - 300) {
+              shouldShow = false;
+            }
+          }
+          
+          setShowFloatingNav(shouldShow);
+          ticking = false;
+        });
         
-        // Hide when footer is within 200px of viewport
-        if (distanceToFooter < 200) {
-          shouldShow = false;
-        }
-      } else {
-        // Fallback: hide when near bottom of page
-        if (scrollTop + windowHeight > documentHeight - 300) {
-          shouldShow = false;
-        }
+        ticking = true;
       }
-      
-      setShowFloatingNav(shouldShow);
     };
     
     window.addEventListener('scroll', handleScroll, { passive: true });

@@ -1,7 +1,7 @@
 import React, { useEffect, useRef } from "react";
 import { motion } from "framer-motion";
 
-const InfiniteGallery = ({
+const InfiniteGallery = React.memo(({
   images = [],
   className = "",
   fadeSettings = {
@@ -18,12 +18,22 @@ const InfiniteGallery = ({
   const scrollContainerRef = useRef(null);
   const animationRef = useRef(null);
   const positionRef = useRef(0);
+  const [isMobile, setIsMobile] = React.useState(false);
+
+  // Detect mobile
+  useEffect(() => {
+    const checkMobile = () => setIsMobile(window.innerWidth < 768);
+    checkMobile();
+    window.addEventListener('resize', checkMobile);
+    return () => window.removeEventListener('resize', checkMobile);
+  }, []);
 
   useEffect(() => {
     const container = scrollContainerRef.current;
-    if (!container || images.length === 0) return;
+    if (!container || images.length === 0 || isMobile) return;
 
     let lastTime = performance.now();
+    let rafId;
 
     const animate = (currentTime) => {
       const deltaTime = (currentTime - lastTime) / 1000;
@@ -39,17 +49,17 @@ const InfiniteGallery = ({
 
       container.style.transform = `translateX(-${positionRef.current}px)`;
 
-      animationRef.current = requestAnimationFrame(animate);
+      rafId = requestAnimationFrame(animate);
     };
 
-    animationRef.current = requestAnimationFrame(animate);
+    rafId = requestAnimationFrame(animate);
 
     return () => {
-      if (animationRef.current) {
-        cancelAnimationFrame(animationRef.current);
+      if (rafId) {
+        cancelAnimationFrame(rafId);
       }
     };
-  }, [images, speed]);
+  }, [images, speed, isMobile]);
 
   if (images.length === 0) {
     return <div className={className}>No images to display</div>;
@@ -66,26 +76,29 @@ const InfiniteGallery = ({
       <div
         ref={scrollContainerRef}
         className="flex gap-6 absolute left-0 top-0 h-full"
-        style={{ willChange: "transform" }}
+        style={{ willChange: isMobile ? "auto" : "transform" }}
       >
         {duplicatedImages.map((image, index) => (
           <motion.div
             key={`${image.src}-${index}`}
             className="relative flex-shrink-0 h-full"
             style={{ width: "400px" }}
-            whileHover={{ scale: 1.05 }}
+            whileHover={!isMobile ? { scale: 1.05 } : {}}
             transition={{ duration: 0.3 }}
           >
             <img
               src={image.src}
               alt={image.alt || `Gallery image ${(index % normalizedImages.length) + 1}`}
               className="w-full h-full object-cover rounded-xl shadow-lg"
+              loading="lazy"
             />
           </motion.div>
         ))}
       </div>
     </div>
   );
-};
+});
+
+InfiniteGallery.displayName = 'InfiniteGallery';
 
 export default InfiniteGallery;

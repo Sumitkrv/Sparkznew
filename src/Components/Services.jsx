@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useMemo, useCallback } from "react";
 import { motion, AnimatePresence, useReducedMotion } from "framer-motion";
 import { Heart, MessageCircle, Send, Bookmark, MoreHorizontal } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
@@ -14,29 +14,29 @@ const theme = {
   darkPlum: "#2D1B4E"
 };
 
-const Services = () => {
+const Services = React.memo(() => {
   const navigate = useNavigate();
   const prefersReducedMotion = useReducedMotion();
   const [currentSlides, setCurrentSlides] = useState([0, 0, 0]);
   const [likedCards, setLikedCards] = useState([false, false, false]);
 
-  const handleLike = (cardIndex) => {
+  const handleLike = useCallback((cardIndex) => {
     setLikedCards(prev => {
       const newLiked = [...prev];
       newLiked[cardIndex] = !newLiked[cardIndex];
       return newLiked;
     });
-  };
+  }, []);
 
-  const handleComment = () => {
+  const handleComment = useCallback(() => {
     navigate('/contact');
     setTimeout(() => window.scrollTo({ top: 0, behavior: 'smooth' }), 100);
-  };
+  }, [navigate]);
 
-  const handleShare = () => {
+  const handleShare = useCallback(() => {
     const message = encodeURIComponent('Check out PRSparkz services! 🚀');
     window.open(`https://wa.me/?text=${message}`, '_blank');
-  };
+  }, []);
 
   const services = [
     {
@@ -104,15 +104,18 @@ const Services = () => {
     },
   ];
 
-  // Auto-rotate slides every 2 seconds
+  // Auto-rotate slides every 3 seconds (increased from 2)
   useEffect(() => {
+    // Disable auto-rotation on mobile to save performance
+    if (window.innerWidth < 768) return;
+    
     const interval = setInterval(() => {
       setCurrentSlides((prev) =>
         prev.map((slideIndex, cardIndex) => 
           (slideIndex + 1) % services[cardIndex].slides.length
         )
       );
-    }, 2000);
+    }, 3000);
 
     return () => clearInterval(interval);
   }, [services.length]);
@@ -130,7 +133,7 @@ const Services = () => {
       aria-label="Our Services"
     >
       {/* Animated Background System - Light Beams Breaking Through */}
-      {!prefersReducedMotion && (
+      {!prefersReducedMotion && window.innerWidth >= 768 && (
         <>
           {/* Primary Light Beam - Diagonal */}
           <motion.div
@@ -350,6 +353,8 @@ const Services = () => {
       </div>
     </section>
   );
-};
+});
+
+Services.displayName = 'Services';
 
 export default Services;

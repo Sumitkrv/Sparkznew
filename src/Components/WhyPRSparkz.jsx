@@ -1,8 +1,8 @@
-import React, { useState } from "react";
+import React, { useState, useMemo, useCallback } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { useNavigate } from 'react-router-dom';
 
-const WhyPRSparkz = () => {
+const WhyPRSparkz = React.memo(() => {
   const navigate = useNavigate();
 
   const features = [
@@ -124,7 +124,9 @@ const WhyPRSparkz = () => {
       </div>
     </section>
   );
-};
+});
+
+WhyPRSparkz.displayName = 'WhyPRSparkz';
 
 // Carousel component for WhyPRSparkz features
 function WhyPRSparkzCarousel({ features }) {
@@ -132,11 +134,14 @@ function WhyPRSparkzCarousel({ features }) {
   const [touchStart, setTouchStart] = React.useState(0);
   const [touchEnd, setTouchEnd] = React.useState(0);
 
-  // Auto-rotation every 5 seconds
+  // Auto-rotation every 6 seconds (reduced on mobile)
   React.useEffect(() => {
+    const isMobile = window.innerWidth < 768;
+    const rotationTime = isMobile ? 8000 : 6000;
+    
     const interval = setInterval(() => {
       setCurrentIndex((prevIndex) => (prevIndex + 1) % features.length);
-    }, 5000);
+    }, rotationTime);
 
     return () => clearInterval(interval);
   }, [features.length]);

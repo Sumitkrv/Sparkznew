@@ -58,13 +58,13 @@ const Testimonials = () => {
     metallicBorder: "#C0C0C0"
   };
 
-  // Parallax scroll effect - adjust for mobile
+  // Parallax scroll effect - disable on mobile
   const { scrollYProgress } = useScroll({
     target: containerRef,
     offset: ["start end", "end start"]
   });
   
-  const y = useTransform(scrollYProgress, [0, 1], isMobile ? [0, 0] : [0, 0]);
+  const y = useTransform(scrollYProgress, [0, 1], [0, 0]);
   const opacity = useTransform(scrollYProgress, [0, 0.2, 0.8, 1], [1, 1, 1, 1]);
   const scale = useTransform(scrollYProgress, [0, 0.2, 0.8, 1], [1, 1, 1, 1]);
 
@@ -209,7 +209,7 @@ const Testimonials = () => {
     const interval = setInterval(() => {
       setDirection(1);
       setActiveIndex(prev => (prev + 1) % testimonials.length);
-    }, 8000);
+    }, 10000); // Increased from 8000 to reduce animation frequency
     
     return () => clearInterval(interval);
   }, [isAutoPlaying, isHovered, testimonials.length, isMobile]);

@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { motion } from 'framer-motion';
 
-const Clients = () => {
+const Clients = React.memo(() => {
   const [hoveredLogo, setHoveredLogo] = useState(null);
   const [isMobile, setIsMobile] = useState(false);
   const containerRef = useRef(null);
@@ -51,9 +51,8 @@ const Clients = () => {
             loop
             muted
             playsInline
-            preload="auto"
+            preload="metadata"
             className="absolute top-0 left-0 w-full h-full object-contain"
-            style={{ willChange: 'auto' }}
           >
             <source src="/sumit4.mp4" type="video/mp4" />
             Your browser does not support the video tag.
@@ -70,10 +69,9 @@ const Clients = () => {
           loop
           muted
           playsInline
-          preload="auto"
+          preload="metadata"
           className="absolute top-0 left-0 w-full h-full object-cover"
           style={{ 
-            willChange: 'auto',
             objectPosition: 'center center'
           }}
         >
@@ -164,6 +162,8 @@ const Clients = () => {
       </div>
     </div>
   );
-};
+});
+
+Clients.displayName = 'Clients';
 
 export default Clients;

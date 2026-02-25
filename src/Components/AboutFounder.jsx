@@ -66,6 +66,7 @@ const AboutFounder = ({ isVisible }) => {
                     src="/PR-FD.jpeg"
                     alt="Priyanka Rawat - Founder & CEO"
                     className="w-full h-full object-cover transition-transform duration-700 hover:scale-105"
+                    loading="lazy"
                     onError={(e) => {
                       e.target.style.display = 'none';
                       e.target.nextElementSibling.style.display = 'flex';

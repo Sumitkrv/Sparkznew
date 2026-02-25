@@ -8,7 +8,7 @@ const theme = {
   accent: "#25D366"
 };
 
-const ContactForm = () => {
+const ContactForm = React.memo(() => {
   const [formData, setFormData] = useState({
     name: "",
     email: "",
@@ -152,7 +152,9 @@ const ContactForm = () => {
       </div>
     </section>
   );
-};
+});
+
+ContactForm.displayName = 'ContactForm';
 
 const ContactPage = () => {
   const [visible] = useState(true);

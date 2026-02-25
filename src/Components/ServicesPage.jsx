@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from "react";
+import React, { useEffect, useRef, useState, useCallback, useMemo } from "react";
 import { motion, useReducedMotion, AnimatePresence } from "framer-motion";
 import Services from "./Services";
 import { Sparkles, Play, Award, TrendingUp, Target, CheckCircle2, ArrowRight, Zap, Shield, Star, ArrowUpRight, Heart, MessageCircle, Send, Bookmark, MoreHorizontal } from "lucide-react";
@@ -15,30 +15,39 @@ const theme = {
   darkPlum: "#2D1B4E"
 };
 
-const ServicesPage = () => {
+const ServicesPage = React.memo(() => {
   const navigate = useNavigate();
   const sectionRef = useRef(null);
   const prefersReducedMotion = useReducedMotion();
   const [currentSlides, setCurrentSlides] = useState([0, 0, 0, 0, 0, 0, 0, 0]);
   const [likedCards, setLikedCards] = useState([false, false, false, false, false, false, false, false]);
+  const [isMobile, setIsMobile] = useState(false);
 
-  const handleLike = (cardIndex) => {
+  // Detect mobile
+  useEffect(() => {
+    const checkMobile = () => setIsMobile(window.innerWidth < 768);
+    checkMobile();
+    window.addEventListener('resize', checkMobile);
+    return () => window.removeEventListener('resize', checkMobile);
+  }, []);
+
+  const handleLike = useCallback((cardIndex) => {
     setLikedCards(prev => {
       const newLiked = [...prev];
       newLiked[cardIndex] = !newLiked[cardIndex];
       return newLiked;
     });
-  };
+  }, []);
 
-  const handleComment = () => {
+  const handleComment = useCallback(() => {
     navigate('/contact');
     setTimeout(() => window.scrollTo({ top: 0, behavior: 'smooth' }), 100);
-  };
+  }, [navigate]);
 
-  const handleShare = () => {
+  const handleShare = useCallback(() => {
     const message = encodeURIComponent('Check out PRSparkz services! 🚀');
     window.open(`https://wa.me/?text=${message}`, '_blank');
-  };
+  }, []);
 
   // Force scroll to top when component mounts
   useEffect(() => {
@@ -156,7 +165,7 @@ const ServicesPage = () => {
           }}
         />
         {/* Animated Background System - Light Beams Breaking Through */}
-        {!prefersReducedMotion && (
+        {!prefersReducedMotion && !isMobile && (
           <>
             {/* Primary Light Beam - Diagonal */}
             <motion.div
@@ -447,6 +456,8 @@ const ServicesPage = () => {
       </div>
     </section>
   );
-};
+});
+
+ServicesPage.displayName = 'ServicesPage';
 
 export default ServicesPage;

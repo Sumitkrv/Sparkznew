@@ -1,13 +1,22 @@
-import React, { useRef } from 'react';
+import React, { useRef, useState, useEffect } from 'react';
 import { motion, useInView, useReducedMotion } from 'framer-motion';
 import { Phone, Calendar, CheckCircle2 } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 
-const FreeStrategyCall = () => {
+const FreeStrategyCall = React.memo(() => {
   const navigate = useNavigate();
   const prefersReducedMotion = useReducedMotion();
   const containerRef = useRef(null);
   const isInView = useInView(containerRef, { once: true, margin: "-100px" });
+  const [isMobile, setIsMobile] = useState(false);
+
+  // Detect mobile
+  useEffect(() => {
+    const checkMobile = () => setIsMobile(window.innerWidth < 768);
+    checkMobile();
+    window.addEventListener('resize', checkMobile);
+    return () => window.removeEventListener('resize', checkMobile);
+  }, []);
 
   // Premium Royal Purple Palette - Editorial Luxury
   const theme = {
@@ -43,7 +52,7 @@ const FreeStrategyCall = () => {
       }}
     >
       {/* Animated Background System - Light Beams Breaking Through */}
-      {!prefersReducedMotion && (
+      {!prefersReducedMotion && !isMobile && (
         <>
           {/* Primary Light Beam - Diagonal */}
           <motion.div
@@ -243,6 +252,8 @@ const FreeStrategyCall = () => {
       </div>
     </section>
   );
-};
+});
+
+FreeStrategyCall.displayName = 'FreeStrategyCall';
 
 export default FreeStrategyCall;

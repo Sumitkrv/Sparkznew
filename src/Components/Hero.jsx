@@ -1,27 +1,22 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useState, useCallback } from "react";
 import { useNavigate } from "react-router-dom";
 
 export default function Hero() {
   const navigate = useNavigate();
+  const [isMobile, setIsMobile] = useState(false);
   
-  // Preload video for faster loading
+  // Detect mobile devices
   useEffect(() => {
-    const link = document.createElement('link');
-    link.rel = 'preload';
-    link.as = 'video';
-    link.href = '/sumit3.mp4';
-    link.type = 'video/mp4';
-    document.head.appendChild(link);
-    
-    return () => {
-      document.head.removeChild(link);
-    };
+    const checkMobile = () => setIsMobile(window.innerWidth < 768);
+    checkMobile();
+    window.addEventListener('resize', checkMobile);
+    return () => window.removeEventListener('resize', checkMobile);
   }, []);
   
-  const handleCTAClick = () => {
+  const handleCTAClick = useCallback(() => {
     navigate('/contact');
     setTimeout(() => window.scrollTo({ top: 0, behavior: 'smooth' }), 100);
-  };
+  }, [navigate]);
 
   return (
     <>
@@ -34,10 +29,8 @@ export default function Hero() {
             loop
             muted
             playsInline
-            preload="auto"
-            loading="eager"
+            preload="metadata"
             className="absolute top-0 left-0 w-full h-full object-contain"
-            style={{ willChange: 'auto' }}
           >
             <source src="/sumit3.mp4" type="video/mp4" />
             Your browser does not support the video tag.
@@ -85,10 +78,8 @@ export default function Hero() {
             loop
             muted
             playsInline
-            preload="auto"
-            loading="eager"
+            preload="metadata"
             className="absolute top-0 left-0 w-full h-full object-contain"
-            style={{ willChange: 'auto' }}
           >
             <source src="/sumit3.mp4" type="video/mp4" />
             Your browser does not support the video tag.
@@ -134,10 +125,8 @@ export default function Hero() {
           loop
           muted
           playsInline
-          preload="auto"
-          loading="eager"
+          preload="metadata"
           className="absolute top-0 left-0 w-full h-full object-cover"
-          style={{ willChange: 'auto' }}
         >
           <source src="/sumit3.mp4" type="video/mp4" />
           Your browser does not support the video tag.

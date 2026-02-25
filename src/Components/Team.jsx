@@ -21,7 +21,7 @@ import {
   Users
 } from 'lucide-react';
 
-const Team = () => {
+const Team = React.memo(() => {
   const navigate = useNavigate();
   const location = useLocation();
   const [isVisible, setIsVisible] = useState(false);
@@ -29,7 +29,16 @@ const Team = () => {
   const [isPlaying, setIsPlaying] = useState({});
   const [muted, setMuted] = useState({});
   const [showPolaroids, setShowPolaroids] = useState(false);
+  const [isMobile, setIsMobile] = useState(false);
   const sectionRef = useRef(null);
+
+  // Detect mobile
+  useEffect(() => {
+    const checkMobile = () => setIsMobile(window.innerWidth < 768);
+    checkMobile();
+    window.addEventListener('resize', checkMobile);
+    return () => window.removeEventListener('resize', checkMobile);
+  }, []);
 
   useEffect(() => {
     const observer = new IntersectionObserver(
@@ -175,9 +184,9 @@ const Team = () => {
     >
       {/* UNBELIEVABLE Background - Polaroid Storm */}
       <div className="absolute inset-0 overflow-hidden">
-        {/* Animated Polaroid Background */}
+        {/* Floating Polaroids Background - Desktop Only */}
         <AnimatePresence>
-          {showPolaroids && (
+          {showPolaroids && !isMobile && (
             <>
               {/* Floating Polaroids */}
               {[...Array(25)].map((_, i) => {
@@ -890,6 +899,8 @@ const Team = () => {
       </motion.div>
     </section>
   );
-};
+});
+
+Team.displayName = 'Team';
 
 export default Team;
