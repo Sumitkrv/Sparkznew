@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 import { motion } from "framer-motion";
 import { ArrowRight } from "lucide-react";
 import { useNavigate } from 'react-router-dom';
@@ -27,8 +27,16 @@ const cardGradient = `
   linear-gradient(135deg, ${theme.midnightPurple}FA 0%, ${theme.violet}F2 20%, ${theme.amethyst}ED 40%, ${theme.plum}E8 60%, ${theme.violet}EC 80%, ${theme.midnightPurple}F2 100%)
 `;
 
-const AboutCTA = ({ isVisible, scrollToSection }) => {
+const AboutCTA = React.memo(({ isVisible, scrollToSection }) => {
   const navigate = useNavigate();
+  const [isMobile, setIsMobile] = useState(false);
+
+  useEffect(() => {
+    const checkMobile = () => setIsMobile(window.innerWidth < 768);
+    checkMobile();
+    window.addEventListener('resize', checkMobile);
+    return () => window.removeEventListener('resize', checkMobile);
+  }, []);
   
   const handleTransformClick = () => {
     navigate('/contact');
@@ -60,13 +68,13 @@ const AboutCTA = ({ isVisible, scrollToSection }) => {
                 0 0 0 1px ${theme.lavenderGlow}20
               `
             }}
-            animate={{
+            animate={!isMobile ? {
               boxShadow: [
                 `0 35px 100px rgba(0,0,0,0.5), 0 15px 40px rgba(124, 58, 237, 0.3), 0 0 0 1px ${theme.lavenderGlow}20`,
                 `0 40px 110px rgba(124, 58, 237, 0.4), 0 20px 50px rgba(124, 58, 237, 0.5), 0 0 0 1px ${theme.lavenderGlow}40`,
                 `0 35px 100px rgba(0,0,0,0.5), 0 15px 40px rgba(124, 58, 237, 0.3), 0 0 0 1px ${theme.lavenderGlow}20`
               ]
-            }}
+            } : {}}
             transition={{
               duration: 4,
               repeat: Infinity,
@@ -74,6 +82,7 @@ const AboutCTA = ({ isVisible, scrollToSection }) => {
             }}
           >
             {/* Animated Background System - Light Beams */}
+            {!isMobile && (
             <motion.div
               className="absolute top-0 right-0 w-[400px] h-full opacity-20 pointer-events-none"
               style={{
@@ -90,6 +99,8 @@ const AboutCTA = ({ isVisible, scrollToSection }) => {
                 ease: "easeInOut"
               }}
             />
+            )}
+            {!isMobile && (
             <motion.div
               className="absolute bottom-0 left-0 w-[300px] h-[300px] rounded-full opacity-25 pointer-events-none"
               style={{
@@ -107,6 +118,7 @@ const AboutCTA = ({ isVisible, scrollToSection }) => {
                 ease: "easeInOut"
               }}
             />
+            )}
             {/* Grid Pattern Overlay */}
             <div 
               className="absolute inset-0 opacity-[0.03]"
@@ -180,6 +192,8 @@ const AboutCTA = ({ isVisible, scrollToSection }) => {
       </div>
     </div>
   );
-};
+});
+
+AboutCTA.displayName = 'AboutCTA';
 
 export default AboutCTA;

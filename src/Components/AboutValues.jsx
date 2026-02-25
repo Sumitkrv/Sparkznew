@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 import { motion } from "framer-motion";
 import { 
   Sparkles,
@@ -25,7 +25,7 @@ const theme = {
   midnightPurple: "#4A1F8F"
 };
 
-const AboutValues = ({ isVisible }) => {
+const AboutValues = React.memo(({ isVisible }) => {
   const coreValues = [
     {
       icon: Bullseye,
@@ -151,6 +151,8 @@ const AboutValues = ({ isVisible }) => {
       </div>
     </div>
   );
-};
+});
+
+AboutValues.displayName = 'AboutValues';
 
 export default AboutValues;

@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 import { motion } from "framer-motion";
 import { 
   Crown,
@@ -28,7 +28,7 @@ const cardGradient = `
   linear-gradient(135deg, rgba(139,95,191,0.05) 0%, rgba(123,76,178,0.03) 100%)
 `;
 
-const AboutFounder = ({ isVisible }) => {
+const AboutFounder = React.memo(({ isVisible }) => {
   return (
     <motion.div
       className="mb-32 relative -mx-[100vw] px-[100vw]"
@@ -152,6 +152,8 @@ const AboutFounder = ({ isVisible }) => {
       </div>
     </motion.div>
   );
-};
+});
+
+AboutFounder.displayName = 'AboutFounder';
 
 export default AboutFounder;

@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 import { motion } from "framer-motion";
 import { 
   Calendar,
@@ -36,7 +36,16 @@ const cardGradient = `
   linear-gradient(135deg, ${theme.midnightPurple}FA 0%, ${theme.violet}F2 20%, ${theme.amethyst}ED 40%, ${theme.plum}E8 60%, ${theme.violet}EC 80%, ${theme.midnightPurple}F2 100%)
 `;
 
-const AboutJourney = ({ isVisible }) => {
+const AboutJourney = React.memo(({ isVisible }) => {
+  const [isMobile, setIsMobile] = useState(false);
+
+  useEffect(() => {
+    const checkMobile = () => setIsMobile(window.innerWidth < 768);
+    checkMobile();
+    window.addEventListener('resize', checkMobile);
+    return () => window.removeEventListener('resize', checkMobile);
+  }, []);
+
   const wisteriaGradient = `linear-gradient(135deg, ${theme.wisteria}, ${theme.lavender}, ${theme.orchid})`;
   const lavenderGradient = `linear-gradient(135deg, ${theme.lavender}, ${theme.orchid}, ${theme.mauve})`;
   const amethystGradient = `linear-gradient(135deg, ${theme.amethyst}, ${theme.orchid}, ${theme.plum})`;
@@ -112,6 +121,7 @@ const AboutJourney = ({ isVisible }) => {
       background: `linear-gradient(135deg, ${theme.deepPurple} 0%, ${theme.darkPlum} 50%, ${theme.royalViolet} 100%)`
     }}>
       {/* Animated Background System - Light Beams Breaking Through */}
+      {!isMobile && (
       <>
         <motion.div
           className="absolute top-0 right-0 w-[800px] h-full opacity-20 pointer-events-none"
@@ -172,6 +182,7 @@ const AboutJourney = ({ isVisible }) => {
           }}
         />
       </>
+      )}
       <div className="max-w-7xl mx-auto px-4 sm:px-6 py-12 sm:py-16 md:py-20 relative z-10">
     <motion.div
       className="relative"
@@ -340,6 +351,8 @@ const AboutJourney = ({ isVisible }) => {
     </div>
     </div>
   );
-};
+});
+
+AboutJourney.displayName = 'AboutJourney';
 
 export default AboutJourney;

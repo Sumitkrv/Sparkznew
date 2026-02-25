@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 import { motion } from "framer-motion";
 import { 
   Sparkles, 
@@ -33,7 +33,7 @@ const cardGradient = `
   linear-gradient(135deg, rgba(139,95,191,0.05) 0%, rgba(123,76,178,0.03) 100%)
 `;
 
-const AboutHeroSection = ({ isVisible }) => {
+const AboutHeroSection = React.memo(({ isVisible }) => {
   return (
     <>
       {/* Professional Mission Section */}
@@ -140,6 +140,8 @@ const AboutHeroSection = ({ isVisible }) => {
       </motion.section>
     </>
   );
-};
+});
+
+AboutHeroSection.displayName = 'AboutHeroSection';
 
 export default AboutHeroSection;
