@@ -38,14 +38,11 @@ function App() {
     <SmoothScroll>
       <HoliColorBomb />
       <PopupForm />
-      <div className="font-sans bg-black text-white relative overflow-x-hidden">
-        {/* Content Layer */}
-        <div className="relative overflow-x-hidden">
-          <ScrollToTop />
-          <NavBar />
-          <Suspense fallback={<LoadingFallback />}>
-            <Routes>
-            <Route
+      <ScrollToTop />
+      <NavBar />
+      <Suspense fallback={<LoadingFallback />}>
+        <Routes>
+          <Route
               path="/"
               element={
                 <>
@@ -62,12 +59,10 @@ function App() {
             <Route path="/services" element={<ServicesPage />} />
             <Route path="/contact" element={<ContactPage />} />
             <Route path="/portfolio" element={<Portfolio />} />
-            <Route path="/team" element={<Team />} />
-          </Routes>
-          </Suspense>
-          <Footer />
-        </div>
-      </div>
+          <Route path="/team" element={<Team />} />
+        </Routes>
+      </Suspense>
+      <Footer />
     </SmoothScroll>
   );
 }

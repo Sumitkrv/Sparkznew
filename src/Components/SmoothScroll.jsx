@@ -1,15 +1,13 @@
-import { createContext, useContext, useEffect, useRef, useState } from "react";
+import { createContext, useContext, useEffect } from "react";
 
 const SmoothScrollContext = createContext(null);
 
 export const useSmoothScroll = () => useContext(SmoothScrollContext);
 
-// Lightweight smooth scroll helper — no external dependency
-function createSmoothScroller() {
-  const easing = (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t));
-
-  function scrollTo(target, options = {}) {
-    const { offset = 0, duration = 1200, immediate = false } = options;
+// Native smooth scroll API
+const scrollAPI = {
+  scrollTo(target, options = {}) {
+    const { offset = 0, immediate = false } = options;
 
     let targetY = 0;
     if (typeof target === "number") {
@@ -22,41 +20,16 @@ function createSmoothScroller() {
       targetY = target.getBoundingClientRect().top + window.scrollY + offset;
     }
 
-    if (immediate) {
-      window.scrollTo(0, targetY);
-      return;
-    }
-
-    const startY = window.scrollY;
-    const diff = targetY - startY;
-    if (Math.abs(diff) < 1) return;
-
-    let startTime = null;
-    function step(timestamp) {
-      if (!startTime) startTime = timestamp;
-      const elapsed = timestamp - startTime;
-      const progress = Math.min(elapsed / duration, 1);
-      const easedProgress = easing(progress);
-      window.scrollTo(0, startY + diff * easedProgress);
-      if (progress < 1) requestAnimationFrame(step);
-    }
-    requestAnimationFrame(step);
+    window.scrollTo({
+      top: targetY,
+      behavior: immediate ? 'auto' : 'smooth'
+    });
   }
+};
 
-  return { scrollTo };
-}
-
-export default function SmoothScroll({ children }) {
-  const [scroller, setScroller] = useState(null);
-
+// Global anchor link handler - call this once in your app
+export function useAnchorLinks() {
   useEffect(() => {
-    // Enable CSS smooth scrolling
-    document.documentElement.style.scrollBehavior = "smooth";
-
-    const instance = createSmoothScroller();
-    setScroller(instance);
-
-    // Anchor link interception — smooth scroll to #hash targets
     function handleAnchorClick(e) {
       const anchor = e.target.closest('a[href^="#"]');
       if (!anchor) return;
@@ -65,19 +38,18 @@ export default function SmoothScroll({ children }) {
       const target = document.querySelector(id);
       if (target) {
         e.preventDefault();
-        instance.scrollTo(target, { offset: -80 });
+        scrollAPI.scrollTo(target, { offset: -80 });
       }
     }
     document.addEventListener("click", handleAnchorClick);
-
-    return () => {
-      document.removeEventListener("click", handleAnchorClick);
-      document.documentElement.style.scrollBehavior = "";
-    };
+    return () => document.removeEventListener("click", handleAnchorClick);
   }, []);
+}
 
+export default function SmoothScroll({ children }) {
+  useAnchorLinks();
   return (
-    <SmoothScrollContext.Provider value={scroller}>
+    <SmoothScrollContext.Provider value={scrollAPI}>
       {children}
     </SmoothScrollContext.Provider>
   );

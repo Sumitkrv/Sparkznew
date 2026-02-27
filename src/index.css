@@ -46,14 +46,14 @@
   
   html {
     font-family: 'Montserrat', sans-serif;
-    /* scroll-behavior removed — Lenis handles smooth scrolling */
+    scroll-behavior: smooth;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
     text-rendering: optimizeLegibility;
   }
   
   body {
-    @apply font-sans text-base leading-relaxed;
+    @apply font-sans text-base leading-relaxed bg-black text-white;
     font-weight: 400;
     letter-spacing: -0.011em;
   }
@@ -124,7 +124,6 @@
 
 #root {
   min-height: 100vh;
-  height: 100%;
 }
 
 body::before {
@@ -138,8 +137,6 @@ body::before {
   opacity: 0.1;
   pointer-events: none;
   z-index: -1;
-  will-change: transform;
-  contain: strict;
 }
 
 /* Premium Selection Color */
@@ -599,57 +596,8 @@ body::before {
 }
 
 /* ============================
-   LENIS SMOOTH SCROLL STYLES
-   ============================ */
-html.lenis, html.lenis body {
-  height: auto;
-}
-
-.lenis.lenis-smooth {
-  scroll-behavior: auto !important;
-}
-
-.lenis.lenis-smooth [data-lenis-prevent] {
-  overscroll-behavior: contain;
-}
-
-.lenis.lenis-stopped {
-  overflow: hidden;
-}
-
-.lenis.lenis-scrolling iframe {
-  pointer-events: none;
-}
-
-/* Overscroll bounce prevention */
-html, body {
-  overscroll-behavior: none;
-}
-
-/* ============================
    SCROLL PERFORMANCE HINTS
    ============================ */
-
-/* GPU-accelerate elements that animate during scroll */
-.premium-card,
-.premium-btn,
-.premium-interactive,
-.hover-lift,
-[data-scroll-gpu] {
-  will-change: transform;
-  transform: translateZ(0);
-  backface-visibility: hidden;
-}
-
-/* Contain paint/layout to prevent scroll-triggered reflows */
-section {
-  contain: layout style;
-}
-
-img, video {
-  contain: layout style paint;
-  content-visibility: auto;
-}
 
 /* Prevent fixed backgrounds from killing scroll performance */
 .bg-fixed-safe {
