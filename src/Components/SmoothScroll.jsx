@@ -1,5 +1,5 @@
 import { createContext, useContext, useEffect, useRef, useState } from "react";
-import Lenis from "lenis";
+import Lenis from "lenis/dist/lenis.mjs";
 
 const SmoothScrollContext = createContext(null);
 
