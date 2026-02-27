@@ -1,5 +1,7 @@
 import React, { useState, useRef, useEffect } from "react";
 import { motion } from "framer-motion";
+import { useSmoothScroll } from './SmoothScroll.jsx';
+import { scrollToTop } from '../utils/navigation.js';
 import AboutHeroSection from './AboutHeroSection';
 import AboutFounder from './AboutFounder';
 import AboutJourney from './AboutJourney';
@@ -25,13 +27,12 @@ const theme = {
 const AboutUs = React.memo(() => {
   const [isVisible, setIsVisible] = useState(true);
   const sectionRef = useRef(null);
+  const lenis = useSmoothScroll();
 
   // Force scroll to top when component mounts
   useEffect(() => {
-    window.scrollTo(0, 0);
-    document.documentElement.scrollTop = 0;
-    document.body.scrollTop = 0;
-  }, []);
+    scrollToTop(lenis, true);
+  }, [lenis]);
 
   const cardGradient = `
     linear-gradient(145deg, rgba(255,255,255,0.25) 0%, rgba(255,255,255,0.04) 25%, rgba(255,255,255,0.02) 50%, rgba(255,255,255,0.12) 75%, rgba(255,255,255,0.22) 100%),

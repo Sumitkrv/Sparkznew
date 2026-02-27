@@ -1,9 +1,12 @@
 import React, { useState, useMemo, useCallback } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { useNavigate } from 'react-router-dom';
+import { useSmoothScroll } from './SmoothScroll.jsx';
+import { scrollToTop } from '../utils/navigation.js';
 
 const WhyPRSparkz = React.memo(() => {
   const navigate = useNavigate();
+  const lenis = useSmoothScroll();
 
   const features = [
     {
@@ -95,7 +98,7 @@ const WhyPRSparkz = React.memo(() => {
           <button
             onClick={() => {
               navigate('/contact');
-              setTimeout(() => window.scrollTo({ top: 0, behavior: 'smooth' }), 100);
+              setTimeout(() => scrollToTop(lenis), 100);
             }}
             className="bg-gray-900 text-white font-semibold px-8 py-4 rounded-full text-lg hover:bg-gray-800 transition-colors duration-300 mb-8"
           >

@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useNavigate, useLocation } from 'react-router-dom';
+import { useSmoothScroll } from './SmoothScroll.jsx';
 import { 
   Camera, 
   Film,
@@ -24,6 +25,7 @@ import {
 const Team = React.memo(() => {
   const navigate = useNavigate();
   const location = useLocation();
+  const lenis = useSmoothScroll();
   const [isVisible, setIsVisible] = useState(false);
   const [activeVideo, setActiveVideo] = useState(null);
   const [isPlaying, setIsPlaying] = useState({});
@@ -768,18 +770,22 @@ const Team = React.memo(() => {
                   // Check if we're on the home page
                   if (location.pathname === '/') {
                     // Scroll to contact section on home page
-                    const contactSection = document.getElementById('contact');
-                    if (contactSection) {
-                      contactSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                    if (lenis) {
+                      lenis.scrollTo('#contact');
+                    } else {
+                      const contactSection = document.getElementById('contact');
+                      if (contactSection) contactSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
                     }
                   } else {
                     // Navigate to home page with contact hash
                     navigate('/#contact');
                     // Scroll after navigation
                     setTimeout(() => {
-                      const contactSection = document.getElementById('contact');
-                      if (contactSection) {
-                        contactSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                      if (lenis) {
+                        lenis.scrollTo('#contact');
+                      } else {
+                        const contactSection = document.getElementById('contact');
+                        if (contactSection) contactSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
                       }
                     }, 100);
                   }
@@ -815,29 +821,33 @@ const Team = React.memo(() => {
                   // Check if we're on the home page
                   if (location.pathname === '/') {
                     // Scroll to contact section on home page
-                    const contactSection = document.getElementById('contact');
-                    if (contactSection) {
-                      contactSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
-                      // Focus on phone input after scrolling
-                      setTimeout(() => {
-                        const phoneInput = document.querySelector('input[type="tel"]') || document.querySelector('input[name="phone"]');
-                        if (phoneInput) phoneInput.focus();
-                      }, 800);
+                    if (lenis) {
+                      lenis.scrollTo('#contact');
+                    } else {
+                      const contactSection = document.getElementById('contact');
+                      if (contactSection) contactSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
                     }
+                    // Focus on phone input after scrolling
+                    setTimeout(() => {
+                      const phoneInput = document.querySelector('input[type="tel"]') || document.querySelector('input[name="phone"]');
+                      if (phoneInput) phoneInput.focus();
+                    }, 800);
                   } else {
                     // Navigate to home page with contact hash
                     navigate('/#contact');
                     // Scroll after navigation
                     setTimeout(() => {
-                      const contactSection = document.getElementById('contact');
-                      if (contactSection) {
-                        contactSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
-                        // Focus on phone input
-                        setTimeout(() => {
-                          const phoneInput = document.querySelector('input[type="tel"]') || document.querySelector('input[name="phone"]');
-                          if (phoneInput) phoneInput.focus();
-                        }, 300);
+                      if (lenis) {
+                        lenis.scrollTo('#contact');
+                      } else {
+                        const contactSection = document.getElementById('contact');
+                        if (contactSection) contactSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
                       }
+                      // Focus on phone input
+                      setTimeout(() => {
+                        const phoneInput = document.querySelector('input[type="tel"]') || document.querySelector('input[name="phone"]');
+                        if (phoneInput) phoneInput.focus();
+                      }, 300);
                     }, 100);
                   }
                 }}

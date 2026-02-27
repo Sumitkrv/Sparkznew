@@ -2,6 +2,8 @@ import React, { useState, useEffect } from "react";
 import { motion } from "framer-motion";
 import { ArrowRight } from "lucide-react";
 import { useNavigate } from 'react-router-dom';
+import { useSmoothScroll } from './SmoothScroll.jsx';
+import { scrollToTop } from '../utils/navigation.js';
 
 const theme = {
   deepPurple: "#1A0B2E",
@@ -29,6 +31,7 @@ const cardGradient = `
 
 const AboutCTA = React.memo(({ isVisible, scrollToSection }) => {
   const navigate = useNavigate();
+  const lenis = useSmoothScroll();
   const [isMobile, setIsMobile] = useState(false);
 
   useEffect(() => {
@@ -40,12 +43,12 @@ const AboutCTA = React.memo(({ isVisible, scrollToSection }) => {
   
   const handleTransformClick = () => {
     navigate('/contact');
-    setTimeout(() => window.scrollTo({ top: 0, behavior: 'smooth' }), 100);
+    setTimeout(() => scrollToTop(lenis), 100);
   };
 
   const handleSuccessStoriesClick = () => {
     navigate('/contact');
-    setTimeout(() => window.scrollTo({ top: 0, behavior: 'smooth' }), 100);
+    setTimeout(() => scrollToTop(lenis), 100);
   };
 
   return (

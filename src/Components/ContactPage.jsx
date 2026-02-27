@@ -1,6 +1,8 @@
 import React, { useEffect, useState } from "react";
 import { motion } from "framer-motion";
 import { Mail, Phone, Clock, ShieldCheck } from "lucide-react";
+import { useSmoothScroll } from './SmoothScroll.jsx';
+import { scrollToTop } from '../utils/navigation.js';
 
 const theme = {
   primary: "#5B3A8F",
@@ -19,10 +21,21 @@ const ContactForm = React.memo(() => {
   const [submitStatus, setSubmitStatus] = useState(null);
 
   const handleChange = (e) => {
-    setFormData({
-      ...formData,
-      [e.target.name]: e.target.value
-    });
+    const { name, value } = e.target;
+    
+    // For phone field, allow only numbers, +, -, spaces, and parentheses
+    if (name === 'phone') {
+      const filteredValue = value.replace(/[^0-9+\-() ]/g, '');
+      setFormData({
+        ...formData,
+        [name]: filteredValue
+      });
+    } else {
+      setFormData({
+        ...formData,
+        [name]: value
+      });
+    }
   };
 
   const handleSubmit = async (e) => {
@@ -102,6 +115,7 @@ const ContactForm = React.memo(() => {
               onChange={handleChange}
               placeholder="Your Full Name"
               required
+              maxLength={50}
               className="w-full px-5 py-4 rounded-xl border border-gray-300 focus:outline-none focus:ring-2 focus:ring-purple-400 text-black"
             />
 
@@ -111,6 +125,7 @@ const ContactForm = React.memo(() => {
               value={formData.email}
               onChange={handleChange}
               placeholder="Email Address (optional)"
+              maxLength={50}
               className="w-full px-5 py-4 rounded-xl border border-gray-300 focus:outline-none focus:ring-2 focus:ring-purple-400 text-black"
             />
 
@@ -121,6 +136,7 @@ const ContactForm = React.memo(() => {
               onChange={handleChange}
               placeholder="Phone / WhatsApp Number"
               required
+              maxLength={20}
               className="w-full px-5 py-4 rounded-xl border border-gray-300 focus:outline-none focus:ring-2 focus:ring-purple-400 text-black"
             />
 
@@ -130,6 +146,7 @@ const ContactForm = React.memo(() => {
               onChange={handleChange}
               placeholder="Briefly tell us about your goal (optional)"
               rows="4"
+              maxLength={500}
               className="w-full px-5 py-4 rounded-xl border border-gray-300 focus:outline-none focus:ring-2 focus:ring-purple-400 text-black"
             />
 
@@ -158,10 +175,11 @@ ContactForm.displayName = 'ContactForm';
 
 const ContactPage = () => {
   const [visible] = useState(true);
+  const lenis = useSmoothScroll();
 
   useEffect(() => {
-    window.scrollTo(0, 0);
-  }, []);
+    scrollToTop(lenis, true);
+  }, [lenis]);
 
   return (
     <section className="relative overflow-hidden bg-white">

@@ -2,9 +2,12 @@ import React, { useRef, useState, useEffect } from 'react';
 import { motion, useInView, useReducedMotion } from 'framer-motion';
 import { Phone, Calendar, CheckCircle2 } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
+import { useSmoothScroll } from './SmoothScroll.jsx';
+import { scrollToTop } from '../utils/navigation.js';
 
 const FreeStrategyCall = React.memo(() => {
   const navigate = useNavigate();
+  const lenis = useSmoothScroll();
   const prefersReducedMotion = useReducedMotion();
   const containerRef = useRef(null);
   const isInView = useInView(containerRef, { once: true, margin: "-100px" });
@@ -60,7 +63,9 @@ const FreeStrategyCall = React.memo(() => {
             style={{
               background: `linear-gradient(135deg, transparent 0%, ${theme.electricPurple} 50%, transparent 100%)`,
               filter: 'blur(120px)',
-              transformOrigin: 'top right'
+              transformOrigin: 'top right',
+              willChange: 'transform, opacity',
+              contain: 'strict',
             }}
             animate={{
               opacity: [0.15, 0.3, 0.15],
@@ -79,6 +84,8 @@ const FreeStrategyCall = React.memo(() => {
             style={{
               background: `radial-gradient(circle at center, ${theme.electricPurple}, ${theme.midViolet}, transparent 70%)`,
               filter: 'blur(100px)',
+              willChange: 'transform, opacity',
+              contain: 'strict',
             }}
             animate={{
               x: [0, 50, 0],
@@ -98,6 +105,8 @@ const FreeStrategyCall = React.memo(() => {
             style={{
               background: `radial-gradient(circle at center, ${theme.lavenderGlow}, transparent 60%)`,
               filter: 'blur(90px)',
+              willChange: 'transform, opacity',
+              contain: 'strict',
             }}
             animate={{
               scale: [1, 1.3, 1],
@@ -230,7 +239,7 @@ const FreeStrategyCall = React.memo(() => {
               <motion.button
                 onClick={() => {
                   navigate('/contact');
-                  setTimeout(() => window.scrollTo({ top: 0, behavior: 'smooth' }), 100);
+                  setTimeout(() => scrollToTop(lenis), 100);
                 }}
                 className="w-full px-8 py-4 rounded-xl font-semibold text-lg shadow-xl hover:shadow-2xl transition-all duration-300"
                 style={{

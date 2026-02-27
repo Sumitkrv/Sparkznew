@@ -1,8 +1,11 @@
 import React, { useEffect, useState, useCallback } from "react";
 import { useNavigate } from "react-router-dom";
+import { useSmoothScroll } from './SmoothScroll.jsx';
+import { scrollToTop } from '../utils/navigation.js';
 
 export default function Hero() {
   const navigate = useNavigate();
+  const lenis = useSmoothScroll();
   const [isMobile, setIsMobile] = useState(false);
   
   // Detect mobile devices
@@ -15,8 +18,8 @@ export default function Hero() {
   
   const handleCTAClick = useCallback(() => {
     navigate('/contact');
-    setTimeout(() => window.scrollTo({ top: 0, behavior: 'smooth' }), 100);
-  }, [navigate]);
+    setTimeout(() => scrollToTop(lenis), 100);
+  }, [navigate, lenis]);
 
   return (
     <>

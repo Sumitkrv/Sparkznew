@@ -1,32 +1,23 @@
 import { useEffect } from 'react';
 import { useLocation } from 'react-router-dom';
+import { useSmoothScroll } from './SmoothScroll.jsx';
 
 const ScrollToTop = () => {
   const { pathname, hash } = useLocation();
+  const lenis = useSmoothScroll();
 
   useEffect(() => {
     // Don't scroll to top if there's a hash (section link)
-    if (hash) {
-      return;
+    if (hash) return;
+
+    if (lenis) {
+      // Use Lenis for instant scroll to top (no animation on route change)
+      lenis.scrollTo(0, { immediate: true });
+    } else {
+      // Fallback for when Lenis isn't ready yet
+      window.scrollTo(0, 0);
     }
-
-    // Force scroll to top immediately and aggressively
-    window.scrollTo(0, 0);
-    document.documentElement.scrollTop = 0;
-    document.body.scrollTop = 0;
-    
-    // Multiple attempts to ensure scroll happens
-    const scrollAttempts = [0, 10, 50, 100];
-    const timeouts = scrollAttempts.map(delay => 
-      setTimeout(() => {
-        window.scrollTo(0, 0);
-        document.documentElement.scrollTop = 0;
-        document.body.scrollTop = 0;
-      }, delay)
-    );
-
-    return () => timeouts.forEach(timeout => clearTimeout(timeout));
-  }, [pathname, hash]);
+  }, [pathname, hash, lenis]);
 
   return null;
 };

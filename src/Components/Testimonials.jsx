@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from "react";
-import { motion, useInView, AnimatePresence, useScroll, useTransform } from "framer-motion";
+import { motion, useInView, AnimatePresence } from "framer-motion";
 import { 
   Star, 
   ChevronLeft, 
@@ -14,10 +14,12 @@ import {
   X
 } from "lucide-react";
 import { useNavigate } from 'react-router-dom';
-import { scrollToSection } from '../utils/navigation.js';
+import { scrollToSection, scrollToTop } from '../utils/navigation.js';
+import { useSmoothScroll } from './SmoothScroll.jsx';
 
 const Testimonials = () => {
   const navigate = useNavigate();
+  const lenis = useSmoothScroll();
   const [activeIndex, setActiveIndex] = useState(0);
   const [direction, setDirection] = useState(0);
   const [isAutoPlaying, setIsAutoPlaying] = useState(true);
@@ -58,15 +60,7 @@ const Testimonials = () => {
     metallicBorder: "#C0C0C0"
   };
 
-  // Parallax scroll effect - disable on mobile
-  const { scrollYProgress } = useScroll({
-    target: containerRef,
-    offset: ["start end", "end start"]
-  });
-  
-  const y = useTransform(scrollYProgress, [0, 1], [0, 0]);
-  const opacity = useTransform(scrollYProgress, [0, 0.2, 0.8, 1], [1, 1, 1, 1]);
-  const scale = useTransform(scrollYProgress, [0, 0.2, 0.8, 1], [1, 1, 1, 1]);
+  // Removed unused parallax scroll tracking (was mapping to constant values)
 
   const testimonials = [
     { 
@@ -245,8 +239,8 @@ const Testimonials = () => {
     if (!touchStart || !touchEnd) return;
     
     const distance = touchStart - touchEnd;
-    const isLeftSwipe = distance > 50;
-    const isRightSwipe = distance < -50;
+    const isLeftSwipe = distance > 30;
+    const isRightSwipe = distance < -30;
     
     if (isLeftSwipe) {
       handleNext();
@@ -476,7 +470,7 @@ const Testimonials = () => {
                     initial={{ opacity: 0, scale: 0.9, rotateY: isMobile ? 0 : 10 }}
                     animate={{ opacity: 1, scale: 1, rotateY: 0 }}
                     exit={{ opacity: 0, scale: 0.9, rotateY: isMobile ? 0 : -10 }}
-                    transition={{ duration: 0.7, ease: "easeInOut" }}
+                    transition={{ duration: isMobile ? 0.4 : 0.7, ease: "easeInOut" }}
                   >
                     {/* Profile Section */}
                     <motion.div 
@@ -747,7 +741,7 @@ const Testimonials = () => {
           <motion.button 
             onClick={() => {
               navigate('/contact');
-              setTimeout(() => window.scrollTo({ top: 0, behavior: 'smooth' }), 100);
+              setTimeout(() => scrollToTop(lenis), 100);
             }}
             className="px-6 py-3 md:px-8 md:py-4 font-semibold text-sm md:text-base rounded-lg shadow-md hover:shadow-lg transition-all inline-flex items-center gap-2 w-full sm:w-auto justify-center"
             style={{ 

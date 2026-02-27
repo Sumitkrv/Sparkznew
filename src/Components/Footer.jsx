@@ -12,7 +12,8 @@ import {
   Info,
   ArrowUp
 } from 'lucide-react';
-import { scrollToSection } from '../utils/navigation.js';
+import { scrollToSection, scrollToTop as scrollToTopUtil } from '../utils/navigation.js';
+import { useSmoothScroll } from './SmoothScroll.jsx';
 
 const Footer = () => {
   const [email, setEmail] = useState('');
@@ -20,6 +21,7 @@ const Footer = () => {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const navigate = useNavigate();
   const location = useLocation();
+  const lenis = useSmoothScroll();
   const currentYear = new Date().getFullYear();
 
   const WEB3FORMS_ACCESS_KEY = "0525684b-fa9d-4611-91c2-06119bbb2ea1";
@@ -61,37 +63,23 @@ const Footer = () => {
   };
 
   const scrollToTop = () => {
-    window.scrollTo({ top: 0, behavior: 'smooth' });
+    scrollToTopUtil(lenis);
   };
 
   const handleServiceClick = (e) => {
     e.preventDefault();
     navigate('/services');
-    setTimeout(() => window.scrollTo({ top: 0, behavior: 'smooth' }), 100);
+    setTimeout(() => scrollToTopUtil(lenis), 100);
   };
 
   const handleContactClick = (e) => {
     e.preventDefault();
     navigate('/contact');
-    setTimeout(() => window.scrollTo({ top: 0, behavior: 'smooth' }), 100);
+    setTimeout(() => scrollToTopUtil(lenis), 100);
   };
 
   return (
     <footer className="relative overflow-hidden">
-      {/* CTA Section Above Footer */}
-      <div 
-        className="relative z-10 py-12"
-        style={{
-          background: 'linear-gradient(135deg, #1A0B2E 0%, #2D1B4E 50%, #4C1D95 100%)'
-        }}
-      >
-        <div className="max-w-7xl mx-auto px-6 lg:px-8 text-center">
-          <h3 className="text-2xl md:text-3xl font-bold text-white mb-4">
-            Ready to grow your brand? Let's talk.
-          </h3>
-        </div>
-      </div> use the bg as same as hero section of service page.
-
       {/* White Background */}
       <div 
         className="absolute inset-0 z-0"
@@ -163,7 +151,7 @@ const Footer = () => {
                       href="/"
                       onClick={(e) => {
                         e.preventDefault();
-                        window.scrollTo({ top: 0, left: 0, behavior: 'instant' });
+                        scrollToTopUtil(lenis, true);
                         navigate('/');
                       }}
                       className="flex items-center text-gray-600 hover:text-[#7B68EE] transition-colors group"
@@ -177,7 +165,7 @@ const Footer = () => {
                       href="/about"
                       onClick={(e) => {
                         e.preventDefault();
-                        window.scrollTo({ top: 0, left: 0, behavior: 'instant' });
+                        scrollToTopUtil(lenis, true);
                         navigate('/about');
                       }}
                       className="flex items-center text-gray-600 hover:text-[#7B68EE] transition-colors group"

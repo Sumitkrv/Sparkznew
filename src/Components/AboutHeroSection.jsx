@@ -80,7 +80,10 @@ const AboutHeroSection = React.memo(({ isVisible }) => {
             <motion.div
               className="rounded-3xl shadow-xl border border-[rgba(139,95,191,0.18)] bg-white p-10 md:p-14 relative overflow-hidden"
               style={{
-                background: `linear-gradient(135deg, #fff 80%, ${theme.wisteria}08 100%)`,
+                backgroundImage: `linear-gradient(135deg, rgba(255, 255, 255, 0.75) 40%, rgba(232, 213, 255, 0.65) 100%), url('/Untitled design (1)/1.jpg')`,
+                backgroundSize: 'cover',
+                backgroundPosition: 'center',
+                backgroundRepeat: 'no-repeat',
                 boxShadow: `0 12px 48px ${theme.wisteria}18, 0 2px 8px #0001`
               }}
               whileHover={{
@@ -98,10 +101,10 @@ const AboutHeroSection = React.memo(({ isVisible }) => {
                     The Sparkz Difference
                   </span>
                 </div>
-                <h3 className="text-2xl sm:text-3xl font-bold mt-4 mb-2" style={{ color: '#18122B' }}>
+                <h3 className="text-2xl sm:text-3xl font-extrabold mt-4 mb-2" style={{ color: '#18122B' }}>
                   Where challenges meet innovative solutions
                 </h3>
-                <p className="font-light text-base sm:text-lg" style={{ color: '#6B7280' }}>
+                <p className="font-bold text-base sm:text-lg" style={{ color: '#18122B' }}>
                   Empowering brands to shine in a crowded world
                 </p>
               </div>
@@ -112,8 +115,8 @@ const AboutHeroSection = React.memo(({ isVisible }) => {
                     style={{ borderColor: theme.lavender, background: `${theme.lavender}10` }}>
                     <Target className="w-7 h-7" style={{ color: theme.lavender }} />
                   </div>
-                  <div className="font-semibold text-lg mb-1" style={{ color: theme.lavender }}>Strategy</div>
-                  <div className="text-sm text-gray-500">Insight-driven planning for impactful brand growth.</div>
+                  <div className="font-bold text-lg mb-1" style={{ color: theme.lavender }}>Strategy</div>
+                  <div className="text-sm font-bold text-gray-700">Insight-driven planning for impactful brand growth.</div>
                 </div>
                 {/* Execution */}
                 <div className="flex flex-col items-center text-center p-4 rounded-xl hover:shadow-lg transition-all group">
@@ -121,8 +124,8 @@ const AboutHeroSection = React.memo(({ isVisible }) => {
                     style={{ borderColor: theme.amethyst, background: `${theme.amethyst}10` }}>
                     <PenTool className="w-7 h-7" style={{ color: theme.amethyst }} />
                   </div>
-                  <div className="font-semibold text-lg mb-1" style={{ color: theme.amethyst }}>Execution</div>
-                  <div className="text-sm text-gray-500">Creative, seamless delivery across every touchpoint.</div>
+                  <div className="font-bold text-lg mb-1" style={{ color: theme.amethyst }}>Execution</div>
+                  <div className="text-sm font-bold text-gray-700">Creative, seamless delivery across every touchpoint.</div>
                 </div>
                 {/* Growth */}
                 <div className="flex flex-col items-center text-center p-4 rounded-xl hover:shadow-lg transition-all group">
@@ -130,8 +133,8 @@ const AboutHeroSection = React.memo(({ isVisible }) => {
                     style={{ borderColor: theme.wisteria, background: `${theme.wisteria}10` }}>
                     <TrendingUp className="w-7 h-7" style={{ color: theme.wisteria }} />
                   </div>
-                  <div className="font-semibold text-lg mb-1" style={{ color: theme.wisteria }}>Growth</div>
-                  <div className="text-sm text-gray-500">Sustainable results that elevate your brand’s future.</div>
+                  <div className="font-bold text-lg mb-1" style={{ color: theme.wisteria }}>Growth</div>
+                  <div className="text-sm font-bold text-gray-700">Sustainable results that elevate your brand's future.</div>
                 </div>
               </div>
             </motion.div>

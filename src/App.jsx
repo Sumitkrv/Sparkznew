@@ -4,6 +4,9 @@ import { Routes, Route } from "react-router-dom";
 // Layout Components
 import NavBar from "./Components/NavBar.jsx";
 import Footer from "./Components/Footer.jsx";
+import SmoothScroll from "./Components/SmoothScroll.jsx";
+import HoliColorBomb from "./Components/HoliColorBomb.jsx";
+import PopupForm from "./Components/PopupForm.jsx";
 
 // Critical above-fold component - load immediately
 import Hero from "./Components/Hero.jsx";
@@ -32,13 +35,16 @@ const LoadingFallback = () => (
 
 function App() {
   return (
-    <div className="font-sans bg-black text-white relative overflow-x-hidden">
-      {/* Content Layer */}
-      <div className="relative overflow-x-hidden">
-        <ScrollToTop />
-        <NavBar />
-        <Suspense fallback={<LoadingFallback />}>
-          <Routes>
+    <SmoothScroll>
+      <HoliColorBomb />
+      <PopupForm />
+      <div className="font-sans bg-black text-white relative overflow-x-hidden">
+        {/* Content Layer */}
+        <div className="relative overflow-x-hidden">
+          <ScrollToTop />
+          <NavBar />
+          <Suspense fallback={<LoadingFallback />}>
+            <Routes>
             <Route
               path="/"
               element={
@@ -58,10 +64,11 @@ function App() {
             <Route path="/portfolio" element={<Portfolio />} />
             <Route path="/team" element={<Team />} />
           </Routes>
-        </Suspense>
-        <Footer />
+          </Suspense>
+          <Footer />
+        </div>
       </div>
-    </div>
+    </SmoothScroll>
   );
 }
 

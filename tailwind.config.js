@@ -7,7 +7,43 @@ export default {
   theme: {
     extend: {
       fontFamily: {
-        sans: ['Montserrat', 'ui-sans-serif', 'system-ui', 'sans-serif'],
+        sans: ['Montserrat', 'ui-sans-serif', 'system-ui', '-apple-system', 'BlinkMacSystemFont', 'Segoe UI', 'sans-serif'],
+      },
+      fontSize: {
+        // Marketing-optimized font sizes
+        'hero': ['4.5rem', { lineHeight: '0.95', letterSpacing: '-0.03em', fontWeight: '800' }],
+        'hero-sm': ['3rem', { lineHeight: '1', letterSpacing: '-0.03em', fontWeight: '800' }],
+        'section': ['3rem', { lineHeight: '1.1', letterSpacing: '-0.025em', fontWeight: '700' }],
+        'section-sm': ['2rem', { lineHeight: '1.15', letterSpacing: '-0.025em', fontWeight: '700' }],
+        'subhead': ['1.875rem', { lineHeight: '1.3', letterSpacing: '-0.02em', fontWeight: '600' }],
+        'subhead-sm': ['1.5rem', { lineHeight: '1.35', letterSpacing: '-0.02em', fontWeight: '600' }],
+        'body-lg': ['1.125rem', { lineHeight: '1.7', letterSpacing: '-0.011em', fontWeight: '400' }],
+        'body': ['1rem', { lineHeight: '1.7', letterSpacing: '-0.011em', fontWeight: '400' }],
+        'body-sm': ['0.875rem', { lineHeight: '1.6', letterSpacing: '-0.008em', fontWeight: '500' }],
+        'btn': ['1rem', { lineHeight: '1', letterSpacing: '0.02em', fontWeight: '600' }],
+        'btn-sm': ['0.875rem', { lineHeight: '1', letterSpacing: '0.02em', fontWeight: '600' }],
+      },
+      fontWeight: {
+        normal: '400',
+        medium: '500',
+        semibold: '600',
+        bold: '700',
+        extrabold: '800',
+      },
+      letterSpacing: {
+        tighter: '-0.03em',
+        tight: '-0.02em',
+        normal: '-0.011em',
+        wide: '0.02em',
+        wider: '0.05em',
+      },
+      lineHeight: {
+        'extra-tight': '0.95',
+        'tight': '1.1',
+        'snug': '1.3',
+        'normal': '1.5',
+        'relaxed': '1.7',
+        'loose': '2',
       },
       colors: {
         brand: {

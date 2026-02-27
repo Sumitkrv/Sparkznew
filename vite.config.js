@@ -41,7 +41,7 @@ export default defineConfig({
   // Optimize video asset handling
   assetsInclude: ['**/*.mp4'],
   optimizeDeps: {
-    include: ['react', 'react-dom', 'react-router-dom'],
+    include: ['react', 'react-dom', 'react-router-dom', 'lenis'],
     exclude: ['@react-three/fiber', '@react-three/drei', 'three']
   }
 })

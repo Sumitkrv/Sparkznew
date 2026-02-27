@@ -1,7 +1,8 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { Briefcase, Sparkles, MessageCircle, Mail, Menu, Phone } from 'lucide-react';
-import { scrollToSection, handleHashNavigation } from '../utils/navigation.js';
+import { scrollToSection, handleHashNavigation, scrollToTop } from '../utils/navigation.js';
+import { useSmoothScroll } from './SmoothScroll.jsx';
 
 const ModernNavbar = () => {
   const [isScrolled, setIsScrolled] = useState(false);
@@ -13,6 +14,7 @@ const ModernNavbar = () => {
   const menuRef = useRef(null);
   const location = useLocation();
   const navigate = useNavigate();
+  const lenis = useSmoothScroll();
 
   // Window resize detection
   useEffect(() => {
@@ -76,8 +78,8 @@ const ModernNavbar = () => {
 
   // Handle hash navigation
   useEffect(() => {
-    handleHashNavigation();
-  }, [location.pathname]);
+    handleHashNavigation(lenis);
+  }, [location.pathname, lenis]);
 
   // Close menu when clicking outside
   useEffect(() => {
@@ -117,12 +119,12 @@ const ModernNavbar = () => {
     
     if (location.pathname === '/') {
       // Already on home page, just scroll
-      scrollToSection(sectionId, 80);
+      scrollToSection(sectionId, 80, lenis);
     } else {
       // Navigate to home first, then scroll
       navigate('/', { replace: false });
       setTimeout(() => {
-        scrollToSection(sectionId, 80);
+        scrollToSection(sectionId, 80, lenis);
       }, 100);
     }
     
@@ -141,7 +143,7 @@ const ModernNavbar = () => {
     setMobileOpenDropdown(null);
     
     // Always scroll to top first
-    window.scrollTo({ top: 0, behavior: 'smooth' });
+    scrollToTop(lenis);
     
     // If already on the same page, just return after scrolling
     if (location.pathname === path) {
@@ -155,7 +157,7 @@ const ModernNavbar = () => {
   const navItems = [
     { label: 'Home', path: '/', icon: '◉', isSection: false },
     { label: 'About', path: '/about', icon: '◈', isSection: false },
-    { label: 'Clients', path: '/portfolio', icon: '◆', isSection: false },
+    { label: 'Portfolio', path: '/portfolio', icon: '◆', isSection: false },
     { label: 'Services', path: '/services', icon: '◎', isSection: false },
     { label: 'Contact', path: '/contact', icon: '◐', isSection: false }
   ];
@@ -199,10 +201,8 @@ const ModernNavbar = () => {
                 setIsMenuOpen(false);
                 setMobileOpenDropdown(null);
                 
-                // Force scroll to top using multiple methods for reliability
-                window.scrollTo({ top: 0, left: 0, behavior: 'smooth' });
-                document.documentElement.scrollTop = 0;
-                document.body.scrollTop = 0;
+                // Smooth scroll to top via Lenis
+                scrollToTop(lenis);
                 
                 // If not on home page, navigate
                 if (location.pathname !== '/') {
@@ -514,6 +514,7 @@ const ModernNavbar = () => {
             <div className="relative">
               <div className="relative space-y-3">
                 {[
+                  { label: 'Services', section: 'services', Icon: Briefcase },
                   { label: 'Why Us', section: 'why-pr-sparkz', Icon: Sparkles },
                   { label: 'Testimonials', section: 'testimonials', Icon: MessageCircle }
                 ].map((item, index) => {
@@ -524,10 +525,10 @@ const ModernNavbar = () => {
                         onClick={(e) => {
                           e.preventDefault();
                           if (location.pathname === '/') {
-                            scrollToSection(item.section, 80);
+                            scrollToSection(item.section, 80, lenis);
                           } else {
                             navigate('/');
-                            setTimeout(() => scrollToSection(item.section, 80), 100);
+                            setTimeout(() => scrollToSection(item.section, 80, lenis), 100);
                           }
                         }}
                         className="group relative flex items-center cursor-pointer focus:outline-none focus:ring-2 focus:ring-purple-300"

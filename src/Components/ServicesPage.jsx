@@ -3,6 +3,8 @@ import { motion, useReducedMotion, AnimatePresence } from "framer-motion";
 import Services from "./Services";
 import { Sparkles, Play, Award, TrendingUp, Target, CheckCircle2, ArrowRight, Zap, Shield, Star, ArrowUpRight, Heart, MessageCircle, Send, Bookmark, MoreHorizontal } from "lucide-react";
 import { useNavigate } from 'react-router-dom';
+import { useSmoothScroll } from './SmoothScroll.jsx';
+import { scrollToTop } from '../utils/navigation.js';
 
 // Premium Royal Purple Palette - Editorial Luxury
 const theme = {
@@ -17,6 +19,7 @@ const theme = {
 
 const ServicesPage = React.memo(() => {
   const navigate = useNavigate();
+  const lenis = useSmoothScroll();
   const sectionRef = useRef(null);
   const prefersReducedMotion = useReducedMotion();
   const [currentSlides, setCurrentSlides] = useState([0, 0, 0, 0, 0, 0, 0, 0]);
@@ -41,8 +44,8 @@ const ServicesPage = React.memo(() => {
 
   const handleComment = useCallback(() => {
     navigate('/contact');
-    setTimeout(() => window.scrollTo({ top: 0, behavior: 'smooth' }), 100);
-  }, [navigate]);
+    setTimeout(() => scrollToTop(lenis), 100);
+  }, [navigate, lenis]);
 
   const handleShare = useCallback(() => {
     const message = encodeURIComponent('Check out PRSparkz services! 🚀');
@@ -51,10 +54,8 @@ const ServicesPage = React.memo(() => {
 
   // Force scroll to top when component mounts
   useEffect(() => {
-    window.scrollTo(0, 0);
-    document.documentElement.scrollTop = 0;
-    document.body.scrollTop = 0;
-  }, []);
+    scrollToTop(lenis, true);
+  }, [lenis]);
 
   // 8 service cards data - Instagram style with multiple slides per card
   const serviceCards = [
@@ -65,7 +66,7 @@ const ServicesPage = React.memo(() => {
         {
           title: "Social Media Marketing",
           description: "Strategic campaigns that drive engagement and build authentic connections with your audience.",
-          imageUrl: "https://images.unsplash.com/photo-1611162617213-7d7a39e9b1d7?w=800&h=800&fit=crop&q=80",
+          imageUrl: "/images/services/Social Media.jpg",
         },
       ],
     },
@@ -74,9 +75,9 @@ const ServicesPage = React.memo(() => {
       avatarUrl: "/logo.png",
       slides: [
         {
-          title: "Instagram Growth",
-          description: "Organic strategies to grow your Instagram presence and reach your target audience effectively.",
-          imageUrl: "https://images.unsplash.com/photo-1611162616305-c69b3fa7fbe0?w=800&h=800&fit=crop&q=80",
+          title: "Digital Marketing",
+          description: "Comprehensive digital strategies that maximize your online presence and drive measurable results.",
+          imageUrl: "/images/services/Digital Marketing.jpg",
         },
       ],
     },
@@ -85,9 +86,9 @@ const ServicesPage = React.memo(() => {
       avatarUrl: "/logo.png",
       slides: [
         {
-          title: "Facebook Advertising",
-          description: "Targeted ad campaigns that maximize ROI and convert prospects into loyal customers.",
-          imageUrl: "https://images.unsplash.com/photo-1611926653670-e652c37f0e02?w=800&h=800&fit=crop&q=80",
+          title: "Influencer Marketing",
+          description: "Connect with the right influencers to amplify your brand message and reach new audiences.",
+          imageUrl: "/images/services/Influencer Marketing.jpg",
         },
       ],
     },
@@ -96,9 +97,9 @@ const ServicesPage = React.memo(() => {
       avatarUrl: "/logo.png",
       slides: [
         {
-          title: "Content Creation",
-          description: "Compelling content that tells your brand story and resonates with your target market.",
-          imageUrl: "https://images.unsplash.com/photo-1460925895917-afdab827c52f?w=800&h=800&fit=crop&q=80",
+          title: "Campaign Planning",
+          description: "Strategic campaign development that delivers impactful results and drives brand growth.",
+          imageUrl: "/images/services/Campaign Planning.jpg",
         },
       ],
     },
@@ -107,9 +108,9 @@ const ServicesPage = React.memo(() => {
       avatarUrl: "/logo.png",
       slides: [
         {
-          title: "Video Production",
-          description: "Professional video content that captures attention and drives engagement across all platforms.",
-          imageUrl: "https://images.unsplash.com/photo-1492691527719-9d1e07e534b4?w=800&h=800&fit=crop&q=80",
+          title: "Celebrity Branding",
+          description: "Leverage celebrity partnerships to elevate your brand and create powerful connections.",
+          imageUrl: "/images/services/Celebrity Branding.jpg",
         },
       ],
     },
@@ -118,9 +119,9 @@ const ServicesPage = React.memo(() => {
       avatarUrl: "/logo.png",
       slides: [
         {
-          title: "Graphic Design",
-          description: "Eye-catching visuals that communicate your brand message and stand out in crowded feeds.",
-          imageUrl: "https://images.unsplash.com/photo-1561070791-2526d30994b5?w=800&h=800&fit=crop&q=80",
+          title: "Web Development",
+          description: "Custom websites that deliver exceptional user experiences and drive conversions.",
+          imageUrl: "/images/services/Web Development.jpg",
         },
       ],
     },
@@ -129,9 +130,9 @@ const ServicesPage = React.memo(() => {
       avatarUrl: "/logo.png",
       slides: [
         {
-          title: "Brand Strategy",
-          description: "Data-driven strategies that position your brand for sustainable growth and success.",
-          imageUrl: "https://images.unsplash.com/photo-1552664730-d307ca884978?w=800&h=800&fit=crop&q=80",
+          title: "AI Solutions",
+          description: "Cutting-edge AI technology to automate processes and enhance your marketing performance.",
+          imageUrl: "/images/services/AI Solutions.jpg",
         },
       ],
     },
@@ -140,9 +141,9 @@ const ServicesPage = React.memo(() => {
       avatarUrl: "/logo.png",
       slides: [
         {
-          title: "Market Research",
-          description: "In-depth analysis of your market, competitors, and audience to inform strategic decisions.",
-          imageUrl: "https://images.unsplash.com/photo-1551288049-bebda4e38f71?w=800&h=800&fit=crop&q=80",
+          title: "Offline Marketing",
+          description: "Impactful offline campaigns that create memorable brand experiences and connections.",
+          imageUrl: "/images/services/Offline Marketing.jpg",
         },
       ],
     }
@@ -241,35 +242,9 @@ const ServicesPage = React.memo(() => {
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.6, delay: 0.1 }}
               >
-                <div 
-                  className="inline-flex items-center gap-3 px-5 py-2.5 rounded-full backdrop-blur-xl"
-                  style={{
-                    background: 'rgba(196, 181, 253, 0.08)',
-                    border: `1px solid ${theme.lavenderGlow}30`,
-                    boxShadow: `0 4px 24px ${theme.electricPurple}15`
-                  }}
-                >
-                  <motion.div
-                    className="w-2 h-2 rounded-full"
-                    style={{ background: theme.lavenderGlow }}
-                    animate={{
-                      scale: [1, 1.3, 1],
-                      opacity: [0.7, 1, 0.7]
-                    }}
-                    transition={{
-                      duration: 2,
-                      repeat: Infinity,
-                      ease: "easeInOut"
-                    }}
-                  />
-                  <span 
-                    className="text-[10px] font-bold tracking-[0.2em] uppercase"
-                    style={{ color: theme.softLilac }}
-                  >
-                    PR • Branding • Digital Authority
-                  </span>
-                  <Zap className="w-4 h-4" style={{ color: theme.lavenderGlow }} />
-                </div>
+               
+                  
+                 
               </motion.div>
               {/* Main Headline - Staggered Editorial Style */}
               <div className="space-y-2 lg:space-y-3">
@@ -305,13 +280,65 @@ const ServicesPage = React.memo(() => {
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.8, delay: 0.7 }}
               >
-                We craft strategic PR and digital narratives that elevate brands, 
-                shape perception, and drive measurable growth.
+                Comprehensive solutions designed to elevate your brand and drive measurable results across all channels.
               </motion.p>
+              
+              {/* Feature Points */}
+              <motion.div
+                className="grid grid-cols-1 sm:grid-cols-3 gap-4 sm:gap-6 max-w-3xl"
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.8, delay: 0.9 }}
+              >
+                <div className="flex flex-col gap-2">
+                  <div className="flex items-center gap-2">
+                    <Sparkles className="w-5 h-5" style={{ color: theme.lavenderGlow }} />
+                    <h3 className="font-bold text-sm sm:text-base" style={{ color: 'white' }}>
+                      Creative Excellence
+                    </h3>
+                  </div>
+                  <p className="text-xs sm:text-sm font-light" style={{ color: theme.softLilac }}>
+                    Innovative designs that stand out
+                  </p>
+                </div>
+                
+                <div className="flex flex-col gap-2">
+                  <div className="flex items-center gap-2">
+                    <Target className="w-5 h-5" style={{ color: theme.lavenderGlow }} />
+                    <h3 className="font-bold text-sm sm:text-base" style={{ color: 'white' }}>
+                      Strategic Focus
+                    </h3>
+                  </div>
+                  <p className="text-xs sm:text-sm font-light" style={{ color: theme.softLilac }}>
+                    Data-driven approach to success
+                  </p>
+                </div>
+                
+                <div className="flex flex-col gap-2">
+                  <div className="flex items-center gap-2">
+                    <Award className="w-5 h-5" style={{ color: theme.lavenderGlow }} />
+                    <h3 className="font-bold text-sm sm:text-base" style={{ color: 'white' }}>
+                      Proven Results
+                    </h3>
+                  </div>
+                  <p className="text-xs sm:text-sm font-light" style={{ color: theme.softLilac }}>
+                    Measurable impact for your brand
+                  </p>
+                </div>
+              </motion.div>
             </div>
-            {/* RIGHT: Abstract Growth System - 5 columns */}
-            <div className="lg:col-span-5 relative h-[500px] lg:h-[700px] hidden lg:block">
-              {/* ...existing code... */}
+            {/* RIGHT: Hero Image - 5 columns, visible on all screens */}
+            <div
+              className="lg:col-span-5 col-span-1 relative flex items-center justify-center mt-12 lg:mt-24 h-[500px] sm:h-[550px] md:h-[600px] lg:h-[700px]"
+            >
+              <motion.img
+                src="/images/4x/Asset 1@4x.png"
+                alt="PR Sparkz - Social Media Tree"
+                className="h-[95%] max-h-[480px] sm:max-h-[540px] md:max-h-[650px] w-auto object-contain"
+                initial={{ opacity: 0, scale: 0.9, x: 40 }}
+                animate={{ opacity: 1, scale: 1, x: 0 }}
+                transition={{ duration: 1, delay: 0.4, ease: [0.22, 1, 0.36, 1] }}
+              />
             </div>
           </div>
         </div>
@@ -392,6 +419,8 @@ const ServicesPage = React.memo(() => {
                       alt={currentSlide.title}
                       className="w-full h-full object-cover"
                       loading="lazy"
+                      decoding="async"
+                      style={{ objectFit: 'cover', objectPosition: 'center' }}
                     />
                   </div>
 

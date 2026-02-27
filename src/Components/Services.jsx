@@ -2,6 +2,8 @@ import React, { useState, useEffect, useMemo, useCallback } from "react";
 import { motion, AnimatePresence, useReducedMotion } from "framer-motion";
 import { Heart, MessageCircle, Send, Bookmark, MoreHorizontal } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
+import { useSmoothScroll } from './SmoothScroll.jsx';
+import { scrollToTop } from '../utils/navigation.js';
 
 // Premium Royal Purple Palette - Editorial Luxury
 const theme = {
@@ -16,6 +18,7 @@ const theme = {
 
 const Services = React.memo(() => {
   const navigate = useNavigate();
+  const lenis = useSmoothScroll();
   const prefersReducedMotion = useReducedMotion();
   const [currentSlides, setCurrentSlides] = useState([0, 0, 0]);
   const [likedCards, setLikedCards] = useState([false, false, false]);
@@ -42,8 +45,8 @@ const Services = React.memo(() => {
 
   const handleComment = useCallback(() => {
     navigate('/contact');
-    setTimeout(() => window.scrollTo({ top: 0, behavior: 'smooth' }), 100);
-  }, [navigate]);
+    setTimeout(() => scrollToTop(lenis), 100);
+  }, [navigate, lenis]);
 
   const handleShare = useCallback(() => {
     const message = encodeURIComponent('Check out PRSparkz services! 🚀');
@@ -58,38 +61,17 @@ const Services = React.memo(() => {
         {
           title: "Social Media Marketing",
           description: "Strategic campaigns that drive engagement and build authentic connections with your audience.",
-          imageUrl: "https://images.unsplash.com/photo-1611162617213-7d7a39e9b1d7?w=800&h=800&fit=crop&q=80",
+          imageUrl: "/images/services/Social Media.jpg",
         },
         {
-          title: "Instagram Growth",
-          description: "Organic strategies to grow your Instagram presence and reach your target audience effectively.",
-          imageUrl: "https://images.unsplash.com/photo-1611162616305-c69b3fa7fbe0?w=800&h=800&fit=crop&q=80",
+          title: "Digital Marketing",
+          description: "Comprehensive digital strategies that maximize your online presence and drive measurable results.",
+          imageUrl: "/images/services/Digital Marketing.jpg",
         },
         {
-          title: "Facebook Advertising",
-          description: "Targeted ad campaigns that maximize ROI and convert prospects into loyal customers.",
-          imageUrl: "https://images.unsplash.com/photo-1611926653670-e652c37f0e02?w=800&h=800&fit=crop&q=80",
-        },
-      ],
-    },
-    {
-      username: "prsparkz",
-      avatarUrl: "/logo.png",
-      slides: [
-        {
-          title: "Content Creation",
-          description: "Compelling content that tells your brand story and resonates with your target market.",
-          imageUrl: "https://images.unsplash.com/photo-1460925895917-afdab827c52f?w=800&h=800&fit=crop&q=80",
-        },
-        {
-          title: "Video Production",
-          description: "Professional video content that captures attention and drives engagement across all platforms.",
-          imageUrl: "https://images.unsplash.com/photo-1492691527719-9d1e07e534b4?w=800&h=800&fit=crop&q=80",
-        },
-        {
-          title: "Graphic Design",
-          description: "Eye-catching visuals that communicate your brand message and stand out in crowded feeds.",
-          imageUrl: "https://images.unsplash.com/photo-1561070791-2526d30994b5?w=800&h=800&fit=crop&q=80",
+          title: "Influencer Marketing",
+          description: "Connect with the right influencers to amplify your brand message and reach new audiences.",
+          imageUrl: "/images/services/Influencer Marketing.jpg",
         },
       ],
     },
@@ -98,19 +80,40 @@ const Services = React.memo(() => {
       avatarUrl: "/logo.png",
       slides: [
         {
-          title: "Brand Strategy",
-          description: "Data-driven strategies that position your brand for sustainable growth and success.",
-          imageUrl: "https://images.unsplash.com/photo-1552664730-d307ca884978?w=800&h=800&fit=crop&q=80",
+          title: "Campaign Planning",
+          description: "Strategic campaign development that delivers impactful results and drives brand growth.",
+          imageUrl: "/images/services/Campaign Planning.jpg",
         },
         {
-          title: "Market Research",
-          description: "In-depth analysis of your market, competitors, and audience to inform strategic decisions.",
-          imageUrl: "https://images.unsplash.com/photo-1551288049-bebda4e38f71?w=800&h=800&fit=crop&q=80",
+          title: "Celebrity Branding",
+          description: "Leverage celebrity partnerships to elevate your brand and create powerful connections.",
+          imageUrl: "/images/services/Celebrity Branding.jpg",
         },
         {
-          title: "Brand Identity",
-          description: "Cohesive brand identity that reflects your values and resonates with your ideal customers.",
-          imageUrl: "https://images.unsplash.com/photo-1557804506-669a67965ba0?w=800&h=800&fit=crop&q=80",
+          title: "Web Development",
+          description: "Custom websites that deliver exceptional user experiences and drive conversions.",
+          imageUrl: "/images/services/Web Development.jpg",
+        },
+      ],
+    },
+    {
+      username: "prsparkz",
+      avatarUrl: "/logo.png",
+      slides: [
+        {
+          title: "AI Solutions",
+          description: "Cutting-edge AI technology to automate processes and enhance your marketing performance.",
+          imageUrl: "/images/services/AI Solutions.jpg",
+        },
+        {
+          title: "Offline Marketing",
+          description: "Impactful offline campaigns that create memorable brand experiences and connections.",
+          imageUrl: "/images/services/Offline Marketing.jpg",
+        },
+        {
+          title: "Social Media Marketing",
+          description: "Strategic campaigns that drive engagement and build authentic connections with your audience.",
+          imageUrl: "/images/services/Social Media.jpg",
         },
       ],
     },
@@ -163,7 +166,9 @@ const Services = React.memo(() => {
             style={{
               background: `linear-gradient(135deg, transparent 0%, ${theme.electricPurple} 50%, transparent 100%)`,
               filter: 'blur(120px)',
-              transformOrigin: 'top right'
+              transformOrigin: 'top right',
+              willChange: 'transform, opacity',
+              contain: 'strict',
             }}
             animate={{
               opacity: [0.15, 0.3, 0.15],
@@ -182,6 +187,8 @@ const Services = React.memo(() => {
             style={{
               background: `radial-gradient(circle at center, ${theme.electricPurple}, ${theme.midViolet}, transparent 70%)`,
               filter: 'blur(100px)',
+              willChange: 'transform, opacity',
+              contain: 'strict',
             }}
             animate={{
               x: [0, 50, 0],
@@ -201,6 +208,8 @@ const Services = React.memo(() => {
             style={{
               background: `radial-gradient(circle at center, ${theme.lavenderGlow}, transparent 60%)`,
               filter: 'blur(90px)',
+              willChange: 'transform, opacity',
+              contain: 'strict',
             }}
             animate={{
               scale: [1, 1.3, 1],
@@ -291,6 +300,8 @@ const Services = React.memo(() => {
                     alt={allServices[mobileSlideIndex].title}
                     className="w-full h-full object-cover"
                     loading="lazy"
+                    decoding="async"
+                    style={{ objectFit: 'cover', objectPosition: 'center' }}
                     initial={{ x: '100%', opacity: 0 }}
                     animate={{ x: 0, opacity: 1 }}
                     exit={{ x: '-100%', opacity: 0 }}
@@ -419,6 +430,8 @@ const Services = React.memo(() => {
                         alt={currentSlide.title}
                         className="w-full h-full object-cover"
                         loading="lazy"
+                        decoding="async"
+                        style={{ objectFit: 'cover', objectPosition: 'center' }}
                         initial={{ x: '100%', opacity: 0 }}
                         animate={{ x: 0, opacity: 1 }}
                         exit={{ x: '-100%', opacity: 0 }}
