@@ -75,8 +75,8 @@ const AboutHeroSection = React.memo(({ isVisible }) => {
               At PR Sparkz, we don’t just promote brands—we help them shine.
             </p>
           </div>
-          {/* Right: The Sparkz Difference Card */}
-          <div className="flex-1 min-w-0 w-full">
+          {/* Right: The Sparkz Difference Card - Desktop */}
+          <div className="flex-1 min-w-0 w-full hidden lg:block">
             <motion.div
               className="rounded-3xl shadow-xl border border-[rgba(139,95,191,0.18)] bg-white p-10 md:p-14 relative overflow-hidden"
               style={{
@@ -138,6 +138,83 @@ const AboutHeroSection = React.memo(({ isVisible }) => {
                 </div>
               </div>
             </motion.div>
+          </div>
+        </div>
+      </motion.section>
+
+      {/* Mobile-only: The Sparkz Difference with Image */}
+      <motion.section
+        className="py-16 px-4 bg-white lg:hidden"
+        initial={{ opacity: 0, y: 30 }}
+        animate={isVisible ? { opacity: 1, y: 0 } : {}}
+        transition={{ duration: 0.8, delay: 0.4 }}
+      >
+        <div className="max-w-2xl mx-auto">
+          {/* Content Card with Background Image */}
+          <div className="p-8 rounded-2xl shadow-xl relative overflow-hidden border border-[rgba(139,95,191,0.18)]"
+            style={{
+              backgroundImage: `linear-gradient(135deg, rgba(255, 255, 255, 0.85) 30%, rgba(232, 213, 255, 0.75) 100%), url('/Untitled design (1)/WhatsApp Image 2026-02-27 at 5.15.31 PM.jpeg')`,
+              backgroundSize: 'cover',
+              backgroundPosition: 'center',
+              backgroundRepeat: 'no-repeat',
+              boxShadow: `0 12px 48px ${theme.wisteria}18, 0 2px 8px #0001`
+            }}>
+            <div className="absolute -top-10 -right-10 w-40 h-40 rounded-full opacity-20 pointer-events-none"
+              style={{ background: `radial-gradient(circle, ${theme.amethyst}55 0%, transparent 80%)` }} />
+            
+            <div className="relative z-10">
+              <div className="text-center mb-6">
+                <div className="inline-flex items-center gap-2 px-4 py-1 rounded-full border"
+                  style={{ borderColor: theme.wisteria, background: `${theme.wisteria}10` }}>
+                  <Crown className="w-5 h-5" style={{ color: theme.amethyst }} />
+                  <span className="text-sm font-semibold uppercase tracking-wider" style={{ color: theme.amethyst }}>
+                    The Sparkz Difference
+                  </span>
+                </div>
+                <h3 className="text-2xl font-extrabold mt-4 mb-2" style={{ color: '#18122B' }}>
+                  Where challenges meet innovative solutions
+                </h3>
+                <p className="font-bold text-base" style={{ color: '#18122B' }}>
+                  Empowering brands to shine in a crowded world
+                </p>
+              </div>
+
+              {/* Three Cards - Stack on Mobile */}
+              <div className="space-y-6">
+                {/* Strategy */}
+                <div className="flex flex-col items-center text-center p-6 rounded-xl shadow-lg" 
+                  style={{ background: `linear-gradient(135deg, ${theme.lavender}08 0%, ${theme.lavender}15 100%)` }}>
+                  <div className="w-14 h-14 flex items-center justify-center rounded-full mb-3 border-2"
+                    style={{ borderColor: theme.lavender, background: `${theme.lavender}20` }}>
+                    <Target className="w-7 h-7" style={{ color: theme.lavender }} />
+                  </div>
+                  <div className="font-bold text-xl mb-2" style={{ color: theme.lavender }}>Strategy</div>
+                  <div className="text-sm font-semibold text-gray-700">Insight-driven planning for impactful brand growth.</div>
+                </div>
+
+                {/* Execution */}
+                <div className="flex flex-col items-center text-center p-6 rounded-xl shadow-lg"
+                  style={{ background: `linear-gradient(135deg, ${theme.amethyst}08 0%, ${theme.amethyst}15 100%)` }}>
+                  <div className="w-14 h-14 flex items-center justify-center rounded-full mb-3 border-2"
+                    style={{ borderColor: theme.amethyst, background: `${theme.amethyst}20` }}>
+                    <PenTool className="w-7 h-7" style={{ color: theme.amethyst }} />
+                  </div>
+                  <div className="font-bold text-xl mb-2" style={{ color: theme.amethyst }}>Execution</div>
+                  <div className="text-sm font-semibold text-gray-700">Creative, seamless delivery across every touchpoint.</div>
+                </div>
+
+                {/* Growth */}
+                <div className="flex flex-col items-center text-center p-6 rounded-xl shadow-lg"
+                  style={{ background: `linear-gradient(135deg, ${theme.wisteria}08 0%, ${theme.wisteria}15 100%)` }}>
+                  <div className="w-14 h-14 flex items-center justify-center rounded-full mb-3 border-2"
+                    style={{ borderColor: theme.wisteria, background: `${theme.wisteria}20` }}>
+                    <TrendingUp className="w-7 h-7" style={{ color: theme.wisteria }} />
+                  </div>
+                  <div className="font-bold text-xl mb-2" style={{ color: theme.wisteria }}>Growth</div>
+                  <div className="text-sm font-semibold text-gray-700">Sustainable results that elevate your brand's future.</div>
+                </div>
+              </div>
+            </div>
           </div>
         </div>
       </motion.section>
