@@ -1,11 +1,14 @@
 import { defineConfig } from 'vite'
 import react from '@vitejs/plugin-react'
+import path from 'path'
 
 export default defineConfig({
   plugins: [react()],
   base: '/',
-  ssr: {
-    noExternal: ['lenis']
+  resolve: {
+    alias: {
+      'lenis': path.resolve(__dirname, 'node_modules/lenis/dist/lenis.mjs')
+    }
   },
   build: {
     outDir: 'dist',
@@ -44,10 +47,7 @@ export default defineConfig({
   // Optimize video asset handling
   assetsInclude: ['**/*.mp4'],
   optimizeDeps: {
-    include: ['react', 'react-dom', 'react-router-dom', 'lenis'],
-    exclude: ['@react-three/fiber', '@react-three/drei', 'three'],
-    esbuildOptions: {
-      target: 'esnext'
-    }
+    include: ['react', 'react-dom', 'react-router-dom'],
+    exclude: ['@react-three/fiber', '@react-three/drei', 'three']
   }
 })
