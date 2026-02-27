@@ -1,46 +1,60 @@
 import { createContext, useContext, useEffect, useRef, useState } from "react";
-import Lenis from "lenis/dist/lenis.mjs";
 
 const SmoothScrollContext = createContext(null);
 
 export const useSmoothScroll = () => useContext(SmoothScrollContext);
 
+// Lightweight smooth scroll helper — no external dependency
+function createSmoothScroller() {
+  const easing = (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t));
+
+  function scrollTo(target, options = {}) {
+    const { offset = 0, duration = 1200, immediate = false } = options;
+
+    let targetY = 0;
+    if (typeof target === "number") {
+      targetY = target;
+    } else if (typeof target === "string") {
+      const el = document.querySelector(target);
+      if (!el) return;
+      targetY = el.getBoundingClientRect().top + window.scrollY + offset;
+    } else if (target instanceof HTMLElement) {
+      targetY = target.getBoundingClientRect().top + window.scrollY + offset;
+    }
+
+    if (immediate) {
+      window.scrollTo(0, targetY);
+      return;
+    }
+
+    const startY = window.scrollY;
+    const diff = targetY - startY;
+    if (Math.abs(diff) < 1) return;
+
+    let startTime = null;
+    function step(timestamp) {
+      if (!startTime) startTime = timestamp;
+      const elapsed = timestamp - startTime;
+      const progress = Math.min(elapsed / duration, 1);
+      const easedProgress = easing(progress);
+      window.scrollTo(0, startY + diff * easedProgress);
+      if (progress < 1) requestAnimationFrame(step);
+    }
+    requestAnimationFrame(step);
+  }
+
+  return { scrollTo };
+}
+
 export default function SmoothScroll({ children }) {
-  const [lenis, setLenis] = useState(null);
-  const lenisRef = useRef(null);
-  const rafRef = useRef(null);
+  const [scroller, setScroller] = useState(null);
 
   useEffect(() => {
-    // Respect accessibility preferences
-    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+    // Enable CSS smooth scrolling
+    document.documentElement.style.scrollBehavior = "smooth";
 
-    // Guard against double init in React 18 StrictMode
-    if (lenisRef.current) {
-      lenisRef.current.destroy();
-      if (rafRef.current) cancelAnimationFrame(rafRef.current);
-    }
-
-    const instance = new Lenis({
-      duration: 1.2,
-      easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t)),
-      orientation: "vertical",
-      gestureOrientation: "vertical",
-      smoothWheel: true,
-      wheelMultiplier: 1,
-      touchMultiplier: 1.5,
-      infinite: false,
-      autoResize: true,
-    });
-
-    lenisRef.current = instance;
-    setLenis(instance);
-
-    // Single RAF loop — no duplicates
-    function raf(time) {
-      instance.raf(time);
-      rafRef.current = requestAnimationFrame(raf);
-    }
-    rafRef.current = requestAnimationFrame(raf);
+    const instance = createSmoothScroller();
+    setScroller(instance);
 
     // Anchor link interception — smooth scroll to #hash targets
     function handleAnchorClick(e) {
@@ -58,15 +72,12 @@ export default function SmoothScroll({ children }) {
 
     return () => {
       document.removeEventListener("click", handleAnchorClick);
-      cancelAnimationFrame(rafRef.current);
-      rafRef.current = null;
-      instance.destroy();
-      lenisRef.current = null;
+      document.documentElement.style.scrollBehavior = "";
     };
   }, []);
 
   return (
-    <SmoothScrollContext.Provider value={lenis}>
+    <SmoothScrollContext.Provider value={scroller}>
       {children}
     </SmoothScrollContext.Provider>
   );
