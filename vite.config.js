@@ -4,6 +4,9 @@ import react from '@vitejs/plugin-react'
 export default defineConfig({
   plugins: [react()],
   base: '/',
+  ssr: {
+    noExternal: ['lenis']
+  },
   build: {
     outDir: 'dist',
     assetsDir: 'assets',
@@ -41,7 +44,7 @@ export default defineConfig({
   // Optimize video asset handling
   assetsInclude: ['**/*.mp4'],
   optimizeDeps: {
-    include: ['react', 'react-dom', 'react-router-dom'],
+    include: ['react', 'react-dom', 'react-router-dom', 'lenis'],
     exclude: ['@react-three/fiber', '@react-three/drei', 'three'],
     esbuildOptions: {
       target: 'esnext'
