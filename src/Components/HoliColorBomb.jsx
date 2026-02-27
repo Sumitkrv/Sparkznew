@@ -80,9 +80,12 @@ class Explosion {
     this.sm = sm;
 
     // Intensity varies by position (center = stronger)
-    const cx = Math.abs(x - vw / 2) / (vw / 2);
-    const cy = Math.abs(y - vh / 2) / (vh / 2);
-    const edgeDist = 1 - Math.max(cx, cy) * 0.3; // 0.7–1.0
+    // Use viewport-relative coords so scroll offset doesn't break intensity
+    const vx = x - (typeof window !== "undefined" ? window.scrollX : 0);
+    const vy = y - (typeof window !== "undefined" ? window.scrollY : 0);
+    const cx = Math.abs(vx - vw / 2) / (vw / 2);
+    const cy = Math.abs(vy - vh / 2) / (vh / 2);
+    const edgeDist = Math.max(0.7, 1 - Math.max(cx, cy) * 0.3); // 0.7–1.0
     this.intensity = edgeDist;
 
     // L1: Core flash
@@ -112,7 +115,7 @@ class Explosion {
     return Array.from({ length: n }, () => {
       const angle = rand(0, Math.PI * 2);
       const speed = rand(0.8, 3.5) * sm * intensity;
-      const maxR  = rand(50, 130) * sm * intensity;
+      const maxR  = rand(20, 50) * sm * intensity;
       return {
         // Position offset from explosion center (animated)
         ox: 0, oy: 0,
@@ -287,7 +290,7 @@ class Explosion {
       if (cr < 2) continue;
 
       // Cloud alpha: full → fade with master
-      const cloudAlpha = masterAlpha * 0.65;
+      const cloudAlpha = masterAlpha * 0.25;
       if (cloudAlpha < 0.005) continue;
 
       const cx = x + c.ox;
@@ -326,9 +329,9 @@ class Explosion {
 
       // Fill with radial gradient (dense center → soft edge)
       const g = ctx.createRadialGradient(0, 0, 0, 0, 0, cr);
-      g.addColorStop(0, rgba(rgb, 0.85));
-      g.addColorStop(0.4, rgba(rgb, 0.55));
-      g.addColorStop(0.7, rgba(rgb, 0.25));
+      g.addColorStop(0, rgba(rgb, 0.45));
+      g.addColorStop(0.4, rgba(rgb, 0.25));
+      g.addColorStop(0.7, rgba(rgb, 0.10));
       g.addColorStop(1, rgba(rgb, 0));
       ctx.fillStyle = g;
       ctx.fill();
@@ -346,110 +349,68 @@ class Explosion {
       ctx.restore();
     }
 
-    // Soft ambient glow behind everything
-    if (age < 3000) {
-      const glowT = Math.min(1, age / 3000);
-      const glowR = this.ringMaxR * 1.2 * easeOutCubic(Math.min(1, age / 600));
-      const glowA = masterAlpha * (1 - glowT) * 0.2;
-      if (glowA > 0.005 && glowR > 5) {
-        ctx.save();
-        ctx.globalAlpha = glowA;
-        const gg = ctx.createRadialGradient(x, y, 0, x, y, glowR);
-        gg.addColorStop(0, rgba(rgb, 0.35));
-        gg.addColorStop(0.5, rgba(rgb, 0.12));
-        gg.addColorStop(1, rgba(rgb, 0));
-        ctx.fillStyle = gg;
-        ctx.beginPath();
-        ctx.arc(x, y, glowR, 0, Math.PI * 2);
-        ctx.fill();
-        ctx.restore();
-      }
-    }
+    // ============================
+    //  L4: POWDER CHUNKS — soft dust specks
+    // ============================
+    for (const ch of this.chunks) {
+      const chunkLife = 4500;
+      const chT = Math.max(0, age - ch.fadeDelay * chunkLife) / chunkLife;
+      if (chT >= 1) continue;
 
-    // ============================
-    //  L4: POWDER CHUNKS
-    //  Irregular lumps with elongation + rotation.
-    // ============================
-    {
+      let chAlpha;
+      if (chT < 0.5) chAlpha = 1;
+      else chAlpha = 1 - easeInQuad((chT - 0.5) / 0.5);
+      chAlpha *= masterAlpha * 0.92;
+      if (chAlpha < 0.01) continue;
+
+      const cx2 = x + ch.ox;
+      const cy2 = y + ch.oy;
+      const r = ch.r * ch.depth;
+
       ctx.save();
-      ctx.fillStyle = this.mainHex;
-
-      for (const ch of this.chunks) {
-        // Chunk alpha: fade based on age + individual delay
-        const chunkLife = 4500;
-        const chT = Math.max(0, age - ch.fadeDelay * chunkLife) / chunkLife;
-        if (chT >= 1) continue;
-
-        let chAlpha;
-        if (chT < 0.5) chAlpha = 1;
-        else chAlpha = 1 - easeInQuad((chT - 0.5) / 0.5);
-        chAlpha *= masterAlpha * 0.9;
-        if (chAlpha < 0.01) continue;
-
-        ctx.globalAlpha = chAlpha;
-
-        const cx2 = x + ch.ox;
-        const cy2 = y + ch.oy;
-        const r = ch.r * ch.depth;
-
-        ctx.save();
-        ctx.translate(cx2, cy2);
-        ctx.rotate(ch.rot);
-        ctx.scale(ch.scaleX, ch.scaleY);
-
-        // Draw as rounded rectangle (irregular lump)
-        const hw = r;
-        const hh = r * 0.7;
-        const cr2 = r * 0.35;
-        ctx.beginPath();
-        ctx.moveTo(-hw + cr2, -hh);
-        ctx.lineTo(hw - cr2, -hh);
-        ctx.arcTo(hw, -hh, hw, -hh + cr2, cr2);
-        ctx.lineTo(hw, hh - cr2);
-        ctx.arcTo(hw, hh, hw - cr2, hh, cr2);
-        ctx.lineTo(-hw + cr2, hh);
-        ctx.arcTo(-hw, hh, -hw, hh - cr2, cr2);
-        ctx.lineTo(-hw, -hh + cr2);
-        ctx.arcTo(-hw, -hh, -hw + cr2, -hh, cr2);
-        ctx.closePath();
-        ctx.fill();
-
-        ctx.restore();
-      }
-
+      ctx.globalAlpha = chAlpha;
+      const sg = ctx.createRadialGradient(cx2, cy2, 0, cx2, cy2, r);
+      sg.addColorStop(0,   rgba(rgb, 1));
+      sg.addColorStop(0.4, rgba(rgb, 0.7));
+      sg.addColorStop(0.8, rgba(rgb, 0.2));
+      sg.addColorStop(1,   rgba(rgb, 0));
+      ctx.fillStyle = sg;
+      ctx.beginPath();
+      ctx.arc(cx2, cy2, r, 0, Math.PI * 2);
+      ctx.fill();
       ctx.restore();
     }
 
     // ============================
-    //  L5: FINE DUST
-    //  Tiny circles that linger longest.
+    //  L5: FINE DUST — tiny soft specks
     // ============================
-    {
+    for (const d of this.dust) {
+      if (age < d.delay) continue;
+      const dustAge = age - d.delay;
+      const dustLife = EXPLOSION_LIFE - d.delay;
+      const dT = dustAge / dustLife;
+      if (dT >= 1) continue;
+
+      let dAlpha;
+      if (dT < 0.7) dAlpha = 1;
+      else dAlpha = 1 - easeInQuad((dT - 0.7) / 0.3);
+      dAlpha *= masterAlpha * 0.75;
+      if (dAlpha < 0.01) continue;
+
+      const px = x + d.ox;
+      const py = y + d.oy;
+      const dr = d.r * d.depth;
+
       ctx.save();
-      ctx.fillStyle = rgba(rgbHi, 1);
-
-      for (const d of this.dust) {
-        if (age < d.delay) continue;
-        const dustAge = age - d.delay;
-        const dustLife = EXPLOSION_LIFE - d.delay;
-        const dT = dustAge / dustLife;
-        if (dT >= 1) continue;
-
-        // Dust fades: hold 70% → fade 30%
-        let dAlpha;
-        if (dT < 0.7) dAlpha = 1;
-        else dAlpha = 1 - easeInQuad((dT - 0.7) / 0.3);
-        dAlpha *= masterAlpha * 0.7;
-        if (dAlpha < 0.01) continue;
-
-        ctx.globalAlpha = dAlpha;
-
-        const dr = d.r * d.depth;
-        ctx.beginPath();
-        ctx.arc(x + d.ox, y + d.oy, dr, 0, Math.PI * 2);
-        ctx.fill();
-      }
-
+      ctx.globalAlpha = dAlpha;
+      const dg = ctx.createRadialGradient(px, py, 0, px, py, dr * 2);
+      dg.addColorStop(0,   rgba(rgbHi, 1));
+      dg.addColorStop(0.5, rgba(rgb,   0.5));
+      dg.addColorStop(1,   rgba(rgb,   0));
+      ctx.fillStyle = dg;
+      ctx.beginPath();
+      ctx.arc(px, py, dr * 2, 0, Math.PI * 2);
+      ctx.fill();
       ctx.restore();
     }
   }
@@ -501,7 +462,8 @@ const HoliColorBomb = React.memo(() => {
     // Clear
     ctx.setTransform(1, 0, 0, 1, 0, 0);
     ctx.clearRect(0, 0, c.width, c.height);
-    ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+    // Offset by scroll so particles stay at their document position
+    ctx.setTransform(dpr, 0, 0, dpr, -window.scrollX * dpr, -window.scrollY * dpr);
 
     // Screen shake aggregate
     let sx = 0, sy = 0;
@@ -539,11 +501,11 @@ const HoliColorBomb = React.memo(() => {
       if (!enabled) return;
       let px, py;
       if (e.touches && e.touches.length > 0) {
-        px = e.touches[0].clientX;
-        py = e.touches[0].clientY;
+        px = e.touches[0].clientX + window.scrollX;
+        py = e.touches[0].clientY + window.scrollY;
       } else {
-        px = e.clientX;
-        py = e.clientY;
+        px = e.clientX + window.scrollX;
+        py = e.clientY + window.scrollY;
       }
 
       // Enforce max concurrent

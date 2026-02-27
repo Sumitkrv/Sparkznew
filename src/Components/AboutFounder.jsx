@@ -64,7 +64,6 @@ const AboutFounder = React.memo(({ isVisible }) => {
                 <div className="relative h-full overflow-hidden">
                   <img 
                     src="/PR-FD.jpeg"
-                    alt="Priyanka Rawat - Founder & CEO"
                     className="w-full h-full object-cover transition-transform duration-700 hover:scale-105"
                     loading="lazy"
                     onError={(e) => {
@@ -87,16 +86,7 @@ const AboutFounder = React.memo(({ isVisible }) => {
                   </div>
                 </div>
                 
-                {/* Bottom Info */}
-                <div className="absolute bottom-0 left-0 right-0 h-20 flex items-end p-4"
-                     style={{
-                       background: `linear-gradient(to top, rgba(255,255,255,0.95), transparent)`
-                     }}>
-                  <div>
-                    <div className="font-bold text-lg" style={{ color: '#111827' }}>Priyanka Rawat</div>
-                    <div className="text-sm" style={{ color: '#6B7280' }}>Founder & Owner, PR Sparkz</div>
-                  </div>
-                </div>
+
               </div>
             </div>
 
